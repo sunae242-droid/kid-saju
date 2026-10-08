@@ -1017,7 +1017,11 @@ function renderHome(){
   <p class="sub">생년월일만 넣으면 아이의 사주 원국과 적성 지도를 무료로 먼저 보여 드려요. 마음에 들면 전체 리포트를 열어 보세요.</p>
  <p class="scrollhint">아래로 넘겨 보세요 ﹀</p>
  </section>`},{t:"궁금한 것",h:`
- <section class="hooks">${HOOKS.map(h=>`<div class="hook"><h3>${h.q}<small>${h.a}</small></h3><p class="fake" aria-hidden="true">${scramble(DM[(h.q.length*3)%10].p[1])}</p></div>`).join("")}</section>`},{t:"무료 미리보기",actLabel:"무료로 미리보기",act:()=>submitForm(),h:`
+ <section class="hooks">${HOOKS.map(h=>`<div class="hook"><h3>${h.q}<small>${h.a}</small></h3><p class="fake" aria-hidden="true">${scramble(DM[(h.q.length*3)%10].p[1])}</p></div>`).join("")}</section>`},{t:"목차",h:`
+ <section class="toc">
+  <div class="toc-h"><h2>우리 아이 진로 리포트 목차</h2><p class="small">9개 장 · 45가지 풀이 · 표지와 한눈에 보는 요약까지, 아이마다 1만 3천 자 안팎의 맞춤 풀이</p></div>
+  ${TOC.map((c,i)=>`<div class="chap"><div class="ch-no">${i+1}장</div><h2>${c[0]}</h2><ul class="items">${c[1].map((t,k)=>`<li><b>풀이${k+1}</b>${t}</li>`).join("")}</ul>${c[2]?`<button type="button" class="more" data-go="f">+ 그 외 ${c[2]}가지 풀이 추가 제공</button>`:""}</div>`).join("")}
+ </section>`},{t:"무료 미리보기",actLabel:"무료로 미리보기",act:()=>submitForm(),h:`
  <form class="card fcompact" id="f" novalidate>
   <h2>무료 미리보기</h2>
   <div class="two">
@@ -1031,21 +1035,18 @@ function renderHome(){
    <button type="button" class="tg1" id="tgx" aria-pressed="false">🤔 태어난 시간을 몰라요</button></div>
   <p class="err" id="err" hidden></p>
   <button class="btn gold flowonly">무료로 미리보기</button>
- </form>`},{t:"목차",h:`
- <section class="toc">
-  <div class="toc-h"><h2>우리 아이 진로 리포트 목차</h2><p class="small">9개 장 · 45가지 풀이 · 표지와 한눈에 보는 요약까지, 아이마다 1만 3천 자 안팎의 맞춤 풀이</p></div>
-  ${TOC.map((c,i)=>`<div class="chap"><div class="ch-no">${i+1}장</div><h2>${c[0]}</h2><ul class="items">${c[1].map((t,k)=>`<li><b>풀이${k+1}</b>${t}</li>`).join("")}</ul>${c[2]?`<button type="button" class="more" data-go="f">+ 그 외 ${c[2]}가지 풀이 추가 제공</button>`:""}</div>`).join("")}
- </section>
+ </form>
  ${footer()}`}];
- mountPager(HP,`<div class="hdr"><b>우리 아이 진로 사주</b><span>사주 · 진로 리포트</span></div>`,{counter:false,last:()=>goPage(2)});
- $("#pNext").onclick=()=>{const c=st.pages[st.pg];if(c.act)c.act();else if(st.pg===st.pages.length-1)goPage(2);else goPage(st.pg+1);};
+ const FORM_PG=HP.findIndex(p=>p.t==="무료 미리보기"); // 무료 미리보기(입력칸) 페이지 — 맨 마지막
+ mountPager(HP,`<div class="hdr"><b>우리 아이 진로 사주</b><span>사주 · 진로 리포트</span></div>`,{counter:false,last:()=>goPage(FORM_PG)});
+ $("#pNext").onclick=()=>{const c=st.pages[st.pg];if(c.act)c.act();else if(st.pg===st.pages.length-1)goPage(FORM_PG);else goPage(st.pg+1);};
  let g=last?.g||"F";
  const setG=v=>{g=v;$("#gF").setAttribute("aria-pressed",v==="F");$("#gM").setAttribute("aria-pressed",v==="M");};
  $("#gF").onclick=()=>setG("F");$("#gM").onclick=()=>setG("M");
  let tsel=null;const tbtn=document.querySelectorAll("#tg button"),tx=$("#tgx");
  const setT=v=>{tsel=v;tbtn.forEach(b=>b.setAttribute("aria-pressed",+b.dataset.k===v));tx.setAttribute("aria-pressed",v<0);$("#err").hidden=true;};
  tbtn.forEach(b=>b.onclick=()=>setT(+b.dataset.k));tx.onclick=()=>setT(-1);
- document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>goPage(2));
+ document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>goPage(FORM_PG));
  $("#f").onsubmit=e=>{e&&e.preventDefault&&e.preventDefault();
   const bd=$("#bd").value,err=$("#err");
   if(!bd){err.textContent="생년월일을 입력해 주세요.";err.hidden=false;return;}

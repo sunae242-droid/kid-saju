@@ -234,6 +234,9 @@ label.f{display:grid;gap:6px;font-size:13px;color:var(--muted);font-weight:500}
 .codebox .code-row{margin-top:8px}
 .big{font-size:17px;line-height:1.6}
 .pdfbar{display:grid;gap:6px;margin-block:8px}
+.pdfroot{position:fixed;left:-10000px;top:0;width:440px;background:#fff;padding:0 6px}
+.pdfroot .pdfpage{padding-block:6px}
+.pdfroot .page,.pdfroot [hidden]{display:block!important}
 @media print{
  :root{--paper:#fff;--card:#fff;--ink:#1D2B36;--muted:#5E6E78;--line:#DCE5E1;--teal:#22786E;--mint:#DDF1EC;--mint-ink:#1B5F57;--gold:#C9952B;--gold-bg:#FBF2DC;color-scheme:light}
  body{background:#fff;font-size:12.5px}.wrap{max-width:none;padding:0}
@@ -1142,7 +1145,84 @@ function goPage(i){const P=st.pages,box=$("#pages");if(!P||!box||i<0||i>=P.lengt
  else{if(el)el.scrollTop=0;box.scrollTo({top:i*box.clientHeight,behavior:"smooth"});}
  setCur(i);}
 const IN_FRAME=(()=>{try{return window.self!==window.top}catch(e){return true}})();
-function pdfBar(){return IN_FRAME?"":`<div class="pdfbar"><button class="btn gold" type="button" onclick="window.print()">PDF로 저장 · 인쇄</button><p class="small">인쇄 창에서 ‘PDF로 저장’을 고르면 파일로 저장돼요.</p></div>`;}
+function pdfBar(){return IN_FRAME?"":`<div class="pdfbar"><button class="btn gold" type="button" onclick="savePdf(this)">📄 PDF로 저장</button><p class="small">누르면 리포트 전체가 PDF 파일로 저장돼요.</p></div>`;}
+
+// ---------- PDF 저장: 인쇄 창 없이 바로 파일로 (휴대폰·앱 안 브라우저 대응) ----------
+const H2C_URL="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+const JSPDF_URL="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+const UA=navigator.userAgent;
+const IN_KAKAO=/KAKAOTALK/i.test(UA),IN_LINE=/\bLine\//i.test(UA);
+const IN_ANDROID_WV=/Android/i.test(UA)&&/; wv\)/.test(UA);                                   // 안드로이드 앱 속 브라우저
+const IN_IOS_WV=/iPhone|iPad|iPod/i.test(UA)&&!/Safari\/|CriOS|FxiOS/.test(UA)&&!navigator.standalone; // 아이폰 앱 속 브라우저
+const IN_APP=IN_KAKAO||IN_LINE||IN_ANDROID_WV||IN_IOS_WV||/Instagram|FBAN|FBAV|FB_IAB|NAVER\(inapp|DaumApps|everytimeApp|BAND\//i.test(UA);
+const loadJs=src=>new Promise((ok,no)=>{if([...document.scripts].some(x=>x.src===src))return ok();const el=document.createElement("script");el.src=src;el.onload=ok;el.onerror=no;document.head.appendChild(el);});
+function pdfSheet(html){$("#shBody").innerHTML=`<div class="sh-hd"><b id="shT">PDF 저장</b><button type="button" class="sh-x" id="shX" aria-label="닫기">✕</button></div>${html}`;
+ $("#sheet").hidden=false;document.body.style.overflow="hidden";const close=()=>{$("#sheet").hidden=true;document.body.style.overflow="";};$("#shX").onclick=close;$("#shBg").onclick=close;return close;}
+// 앱 안 브라우저(카카오톡 등)는 파일 저장이 막혀 있어요 → 휴대폰 기본 브라우저로 이 리포트를 열어서 저장
+function openOutside(){const h=linkFor(st.inp).split("#")[1],q=`?pdf=1&rp=${encodeURIComponent(h)}`,url=APP_URL+q;
+ if(IN_KAKAO){location.href="kakaotalk://web/openExternal?url="+encodeURIComponent(url);return;}
+ if(IN_LINE){location.href=url+"&openExternalBrowser=1";return;}
+ if(/Android/i.test(UA))setTimeout(()=>{location.href=`intent://${location.host}${location.pathname}${q}#Intent;scheme=https;package=com.android.chrome;end`;},400);
+ pdfSheet(`<p>이 앱 안에서는 파일 저장이 안 돼요. 오른쪽 위 <b>⋯</b> 메뉴에서 <b>다른 브라우저로 열기</b>(크롬·사파리)를 눌러 주세요.</p>
+  <button class="btn gold" type="button" id="cpX">크롬·사파리에서 열 주소 복사</button><p class="small">이 주소에는 아이의 리포트가 담겨 있어요. 다른 사람에게 보내지 마세요.</p>`);
+ $("#cpX").onclick=async()=>{try{await navigator.clipboard.writeText(url);$("#cpX").textContent="복사했어요! 크롬·사파리 주소창에 붙여 넣기";}catch(e){prompt("이 주소를 복사해 크롬·사파리에서 열어 주세요",url);}};}
+function offerSaved(blob,name){const file=new File([blob],name,{type:"application/pdf"});const canShare=!!(navigator.canShare&&navigator.canShare({files:[file]}));
+ const close=pdfSheet(`<p>📄 PDF를 저장했어요. 휴대폰의 <b>다운로드</b> 폴더(파일 앱)를 확인해 주세요.</p><p class="small">파일이 안 보이면 아래 버튼으로 열거나 저장해 주세요.</p>
+  <button class="btn gold" type="button" id="pdfOpen">PDF 바로 열기</button>${canShare?`<button class="btn ghost" type="button" id="pdfShare">공유하기로 저장하기</button>`:""}`);
+ $("#pdfOpen").onclick=()=>window.open(URL.createObjectURL(blob),"_blank");
+ if(canShare)$("#pdfShare").onclick=()=>navigator.share({files:[file],title:name}).catch(()=>{});}
+let pdfBusy=false;
+async function savePdf(btn){
+ if(pdfBusy||!st.unlocked||!st.pages)return;
+ if(IN_APP){openOutside();return;}
+ pdfBusy=true;const label=btn?btn.textContent:"";const say=t=>{if(btn)btn.textContent=t;};let root;
+ try{
+  say("📄 PDF 만드는 중…");
+  await Promise.all([loadJs(H2C_URL),loadJs(JSPDF_URL)]);
+  if(document.fonts&&document.fonts.ready)await document.fonts.ready;
+  // 리포트 전체 페이지를 한 줄로 이어 붙인 사본 (안내·버튼은 빼고)
+  root=document.createElement("div");root.className="pdfroot";
+  root.innerHTML=st.pages.map(p=>`<div class="pdfpage">${p.h}</div>`).join("");
+  root.querySelectorAll(".paidnote,.pdfbar,.foot,.more,.bar,.ok,[data-buy],[data-pay]").forEach(n=>n.remove());
+  document.body.appendChild(root);
+  const {jsPDF}=window.jspdf;const pdf=new jsPDF({unit:"mm",format:"a4",compress:true});
+  const PW=210,PH=297,M=12,CW=PW-M*2,BOTTOM=PH-14,GAP=4;let y=M,first=true;
+  const newPage=()=>{pdf.addPage();y=M;};
+  const blocks=[...root.querySelectorAll(".pdfpage")].filter(b=>b.textContent.trim()||b.querySelector("svg,img,canvas"));
+  for(let i=0;i<blocks.length;i++){
+   say(`📄 PDF 만드는 중… ${Math.round(i/blocks.length*100)}%`);
+   const el=blocks[i],isCover=!!el.querySelector(".cover");
+   const cv=await html2canvas(el,{scale:2,backgroundColor:"#ffffff",logging:false});
+   const pxmm=cv.width/CW,hmm=cv.height/pxmm;
+   if(isCover){if(!first)newPage();pdf.addImage(cv.toDataURL("image/jpeg",.88),"JPEG",M,Math.max(M,(PH-hmm)/2),CW,Math.min(hmm,PH-2*M));newPage();first=false;continue;}
+   first=false;
+   const tooTall=hmm>BOTTOM-M;
+   if(y+hmm>BOTTOM&&y>M&&!(tooTall&&BOTTOM-y>70))newPage();
+   if(y+hmm<=BOTTOM){pdf.addImage(cv.toDataURL("image/jpeg",.85),"JPEG",M,y,CW,hmm);y+=hmm+GAP;continue;}
+   // 긴 장은 풀이(문단) 경계에서 나눠 여러 쪽에 — 제목 바로 뒤에서는 자르지 않아요
+   const top=el.getBoundingClientRect().top,sc=cv.width/el.offsetWidth;
+   const cuts=[...el.querySelectorAll(".ritem,p,li,tr,.card,.stat,.row")].filter(n=>!/^H[1-6]$/.test(n.tagName))
+    .map(n=>Math.round((n.getBoundingClientRect().bottom-top)*sc)).sort((a,b)=>a-b);
+   let off=0;
+   while(off<cv.height){
+    const room=Math.floor((BOTTOM-y)*pxmm);let end=Math.min(cv.height,off+room);
+    if(end<cv.height){const best=cuts.filter(c=>c>off+80&&c<=end).pop();if(best)end=best+Math.round(4*sc);}
+    const part=document.createElement("canvas");part.width=cv.width;part.height=end-off;
+    const g=part.getContext("2d");g.fillStyle="#ffffff";g.fillRect(0,0,part.width,part.height);g.drawImage(cv,0,off,cv.width,end-off,0,0,cv.width,end-off);
+    pdf.addImage(part.toDataURL("image/jpeg",.85),"JPEG",M,y,CW,(end-off)/pxmm);y+=(end-off)/pxmm+GAP;off=end;
+    if(off<cv.height)newPage();
+   }
+  }
+  if(y===M&&pdf.getNumberOfPages()>1)pdf.deletePage(pdf.getNumberOfPages());   // 마지막 빈 쪽 지우기
+  const n=pdf.getNumberOfPages();
+  for(let k=2;k<=n;k++){pdf.setPage(k);pdf.setFontSize(8);pdf.setTextColor(150,160,165);pdf.text(`KIDS SAJU CAREER REPORT  ·  ${k-1} / ${n-1}`,PW/2,PH-7,{align:"center"});}
+  const name=`우리아이_진로사주_${(st.inp.name||"리포트").replace(/[\\/:*?"<>|]/g,"")}.pdf`;
+  const blob=pdf.output("blob");pdf.save(name);
+  say("✅ 저장했어요");setTimeout(()=>say(label),3000);
+  offerSaved(blob,name);
+ }catch(e){console.error(e);say(label);toast("PDF를 만들지 못했어요. 잠시 후 다시 시도하거나 크롬·사파리에서 열어 주세요.");}
+ finally{root&&root.remove();pdfBusy=false;}
+}
 function dmKey(A){return fill(A.dm.key,A.nick);}
 function sjShort(i){return timeText(i);}
 function buyBox(){return `
@@ -1227,8 +1307,8 @@ async function handlePayReturn(){const q=new URLSearchParams(location.search);
  catch(e){toast("결제 승인에 실패했어요. 결제된 금액은 자동 취소돼요.");}
  return true;}
 function toast(t){const d=document.createElement("div");d.className="toast";d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),3500);}
-function paidNote(){const rc=(store.get("receipts")||{})[st.order];if(!rc)return "";const L=linkFor(st.inp);
- return `<div class="paidnote">${st.justPaid?`<b>결제가 완료됐어요. 감사합니다!</b>`:`<b>결제 완료된 리포트</b>`}<span class="small">주문번호 ${esc(rc.orderId)} · ${PRICE}${rc.test?" · 테스트 결제":""}</span><span class="small">다른 휴대폰에서도 보려면 아래 링크를 저장해 두세요.</span><div class="order">${esc(L)}</div><button class="btn ghost" type="button" id="cpL">다시 보기 링크 복사</button></div>`;}
+function paidNote(){const rc=(store.get("receipts")||{})[st.order];if(!rc)return "";
+ return `<div class="paidnote">${st.justPaid?`<b>결제가 완료됐어요. 감사합니다!</b>`:`<b>결제 완료된 리포트</b>`}<span class="small">주문번호 ${esc(rc.orderId)} · ${PRICE}${rc.test?" · 테스트 결제":""}</span></div>`;}
 function wirePaid(){const b=$("#cpL");if(!b)return;b.onclick=()=>{try{navigator.clipboard.writeText(linkFor(st.inp)).then(()=>b.textContent="복사했어요",()=>b.textContent="링크를 길게 눌러 복사해 주세요");}catch(e){}};}
 function unlockNow(){const o=store.get("opened")||[];if(!o.includes(st.order))o.push(st.order);store.set("opened",o);st.unlocked=true;st.pg=0;renderReport();scrollTo(0,0);}
 
@@ -1288,7 +1368,9 @@ function renderSeller(){
 }
 
 addEventListener("hashchange",()=>{if(location.hash==="#seller")renderSeller();else openFromHash();});
-handlePayReturn().then(h=>{if(h)return;if(location.hash==="#seller")renderSeller();else if(openFromHash()){}else if(TEST_CHILD){renderHome();openPreview(TEST_CHILD);}else renderHome();});
+(function fromOutside(){const q=new URLSearchParams(location.search),r=q.get("rp");if(!r||!/^r-/.test(r))return;st.wantPdf=q.has("pdf");history.replaceState(null,"",location.pathname+"#"+r);})();
+handlePayReturn().then(h=>{if(h)return;if(location.hash==="#seller")renderSeller();else if(openFromHash()){}else if(TEST_CHILD){renderHome();openPreview(TEST_CHILD);}else renderHome();
+ if(st.wantPdf&&st.unlocked){st.wantPdf=false;setTimeout(()=>{pdfSheet(`<p>리포트를 열었어요. 아래 버튼을 누르면 PDF로 저장돼요.</p><button class="btn gold" type="button" id="pdfGo">📄 PDF로 저장</button>`);$("#pdfGo").onclick=()=>{$("#sheet").hidden=true;document.body.style.overflow="";savePdf(document.querySelector(".pdfbar .btn"));};},600);}});
 </script>
 
 </body></html>

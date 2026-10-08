@@ -1198,7 +1198,9 @@ async function savePdf(btn){
   for(let i=0;i<blocks.length;i++){
    say(`📄 PDF 만드는 중… ${Math.round(i/blocks.length*100)}%`);
    const el=blocks[i],isCover=!!el.querySelector(".cover");
-   const cv=await html2canvas(el,{scale:2.2,backgroundColor:"#ffffff",logging:false});   // 2.2배로 그려서 글자를 또렷하게
+   const cv=await html2canvas(el,{scale:2.2,backgroundColor:"#ffffff",logging:false,
+    // 찍는 사본은 휴대폰이 다크 모드여도 무조건 밝은 모드로 (어두운 색 변수 자체를 끔)
+    onclone:d=>{d.documentElement.setAttribute("data-theme","light");d.documentElement.style.colorScheme="light";}});   // 2.2배로 그려서 글자를 또렷하게
    const pxmm=cv.width/CW,hmm=cv.height/pxmm;
    if(isCover){if(!first)newPage();pdf.addImage(cv.toDataURL("image/jpeg",.92),"JPEG",M,Math.max(M,(PH-hmm)/2),CW,Math.min(hmm,PH-2*M));newPage();first=false;continue;}
    first=false;

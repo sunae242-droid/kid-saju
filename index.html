@@ -234,7 +234,13 @@ label.f{display:grid;gap:6px;font-size:13px;color:var(--muted);font-weight:500}
 .codebox .code-row{margin-top:8px}
 .big{font-size:17px;line-height:1.6}
 .pdfbar{display:grid;gap:6px;margin-block:8px}
-.pdfroot{position:fixed;left:-10000px;top:0;width:440px;background:#fff;padding:0 6px}
+.pdfroot{position:fixed;left:-10000px;top:0;width:440px;background:#fff;padding:0 6px;
+ /* PDF는 휴대폰이 다크 모드여도 항상 밝은 종이 + 진한 글자 (인쇄용보다 글자를 조금 더 진하게) */
+ --paper:#F3F6F4;--card:#fff;--ink:#16222B;--muted:#46555F;--line:#D3DDD9;
+ --teal:#1D6B62;--mint:#DDF1EC;--mint-ink:#164F48;--gold:#AE7F1C;--gold-bg:#FBF2DC;--red:#B4432F;
+ --e-mok:#3A874B;--e-hwa:#C94E3A;--e-to:#AB7F28;--e-geum:#6C7780;--e-su:#2C4A75;
+ color-scheme:light;color:var(--ink)}
+.pdfroot *,.pdfroot *::before,.pdfroot *::after{animation:none!important;transition:none!important}
 .pdfroot .pdfpage{padding-block:6px}
 .pdfroot .page,.pdfroot [hidden]{display:block!important}
 @media print{
@@ -1192,13 +1198,13 @@ async function savePdf(btn){
   for(let i=0;i<blocks.length;i++){
    say(`📄 PDF 만드는 중… ${Math.round(i/blocks.length*100)}%`);
    const el=blocks[i],isCover=!!el.querySelector(".cover");
-   const cv=await html2canvas(el,{scale:2,backgroundColor:"#ffffff",logging:false});
+   const cv=await html2canvas(el,{scale:2.2,backgroundColor:"#ffffff",logging:false});   // 2.2배로 그려서 글자를 또렷하게
    const pxmm=cv.width/CW,hmm=cv.height/pxmm;
-   if(isCover){if(!first)newPage();pdf.addImage(cv.toDataURL("image/jpeg",.88),"JPEG",M,Math.max(M,(PH-hmm)/2),CW,Math.min(hmm,PH-2*M));newPage();first=false;continue;}
+   if(isCover){if(!first)newPage();pdf.addImage(cv.toDataURL("image/jpeg",.92),"JPEG",M,Math.max(M,(PH-hmm)/2),CW,Math.min(hmm,PH-2*M));newPage();first=false;continue;}
    first=false;
    const tooTall=hmm>BOTTOM-M;
    if(y+hmm>BOTTOM&&y>M&&!(tooTall&&BOTTOM-y>70))newPage();
-   if(y+hmm<=BOTTOM){pdf.addImage(cv.toDataURL("image/jpeg",.85),"JPEG",M,y,CW,hmm);y+=hmm+GAP;continue;}
+   if(y+hmm<=BOTTOM){pdf.addImage(cv.toDataURL("image/jpeg",.86),"JPEG",M,y,CW,hmm);y+=hmm+GAP;continue;}
    // 긴 장은 풀이(문단) 경계에서 나눠 여러 쪽에 — 제목 바로 뒤에서는 자르지 않아요
    const top=el.getBoundingClientRect().top,sc=cv.width/el.offsetWidth;
    const cuts=[...el.querySelectorAll(".ritem,p,li,tr,.card,.stat,.row")].filter(n=>!/^H[1-6]$/.test(n.tagName))
@@ -1209,7 +1215,7 @@ async function savePdf(btn){
     if(end<cv.height){const best=cuts.filter(c=>c>off+80&&c<=end).pop();if(best)end=best+Math.round(4*sc);}
     const part=document.createElement("canvas");part.width=cv.width;part.height=end-off;
     const g=part.getContext("2d");g.fillStyle="#ffffff";g.fillRect(0,0,part.width,part.height);g.drawImage(cv,0,off,cv.width,end-off,0,0,cv.width,end-off);
-    pdf.addImage(part.toDataURL("image/jpeg",.85),"JPEG",M,y,CW,(end-off)/pxmm);y+=(end-off)/pxmm+GAP;off=end;
+    pdf.addImage(part.toDataURL("image/jpeg",.86),"JPEG",M,y,CW,(end-off)/pxmm);y+=(end-off)/pxmm+GAP;off=end;
     if(off<cv.height)newPage();
    }
   }

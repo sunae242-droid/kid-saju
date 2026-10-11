@@ -1078,7 +1078,7 @@ function renderHome(){
 }
 function submitForm(){const f=$("#f");if(f&&f.onsubmit)f.onsubmit({preventDefault(){}});}
 function bizInfo(){const r=[["대표자",BIZ.owner],["사업자등록번호",BIZ.regNo],["통신판매업 신고번호",BIZ.mailOrderNo],["연락처",BIZ.tel],["이메일",BIZ.email],["사업장 주소",BIZ.addr]].filter(x=>x[1]);
- return `<div class="biz"><b>상호 ${esc(BIZ.name)}</b><span>서비스 우리 아이 진로 사주 (디지털 콘텐츠 · 결제 즉시 열람)</span>${r.map(x=>`<span>${x[0]} ${esc(x[1])}</span>`).join("")}</div>`;}
+ return `<div class="biz"><b>${esc(BIZ.name)}</b><span>서비스 우리 아이 진로 사주 (디지털 콘텐츠 · 결제 즉시 열람)</span>${r.map(x=>`<span>${x[0]} ${esc(x[1])}</span>`).join("")}</div>`;}
 function footer(){return `<div class="foot">${bizInfo()}<p>사주 풀이는 아이를 이해하기 위한 참고 자료이며, 진로 결정은 아이의 흥미와 경험을 함께 살펴 주세요.</p><div class="links"><button type="button" onclick="renderHome();scrollTo(0,0)">처음으로</button> · <button type="button" onclick="renderSeller()">판매자</button></div></div>`;}
 
 // ---------- 미리보기 / 전체 ----------

@@ -1119,6 +1119,7 @@ function renderReport(){
  </section>`;
  const P=[];
  if(u){P.push({t:"표지",h:paidNote()+pdfBar()+coverHTML(A,st.inp,timeText(st.inp))});P.push({t:"한눈에 보기",h:summaryHTML(A,ch)});}
+ if(!u)P.push({t:"표지",h:coverHTML(A,st.inp,timeText(st.inp))});
  P.push({t:"사주 원국",h:prof},{t:"적성 지도",h:fields});
  ch.forEach((c,ci)=>{P.push({t:`${ci+1}장 · ${c.t}`,h:chap(c,ci)});if(!u&&ci===0)P.push({t:"전체 리포트 열기",h:`<div class="paynext"><b>여기까지 무료 미리보기예요</b><span>다음 장부터는 풀이 일부만 보여요. 결제하면 ${ch.length}개 장 ${nItems}가지 풀이가 모두 열려요.</span></div>`+buyBox(),pay:true});});
  if(!u)P.push({t:"전체 리포트 열기",h:buyBox(),pay:true});

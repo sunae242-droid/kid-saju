@@ -297,7 +297,7 @@ label.f{display:grid;gap:6px;font-size:13px;color:var(--muted);font-weight:500}
 </style>
 
 <div class="wrap" id="app"></div>
-<div class="bar" id="bar" hidden><div class="in"><div class="p"><s>정가 20,000원</s><b>9,900원</b></div><button class="btn gold" id="barBtn">결제하고 전체 보기</button></div></div>
+<div class="bar" id="bar" hidden><div class="in"><div class="p"><s>정가 20,000원</s><b>12,900원</b></div><button class="btn gold" id="barBtn">결제하고 전체 보기</button></div></div>
 <div class="sheet" id="sheet" hidden><div class="sh-bg" id="shBg"></div><div class="sh-in" role="dialog" aria-modal="true" aria-labelledby="shT"><div id="shBody"></div></div></div>
 
 <script>// ===== 사주 계산 엔진 (saju_engine.py 이식) =====
@@ -977,13 +977,13 @@ function coverHTML(A,inp,timeTxt){const order=A.r.P.hour?["hour","day","month","
 </script>
 <script>
 // ===== 판매 설정 (여기만 바꾸면 됩니다) =====
-const PRICE="9,900원", LIST_PRICE="20,000원", SALE="51% 할인";
+const PRICE="12,900원", LIST_PRICE="20,000원", SALE="36% 할인";
 // 계좌이체를 받으려면 아래에 은행·계좌번호·예금주를 넣으세요. 비워 두면 당근페이만 보여요.
 // 결제 설정
 //  mode "test" : 결제 흐름을 그대로 체험 (실제 돈이 나가지 않음)
 //  mode "toss" : 토스페이먼츠 결제창 (테스트 키면 테스트 결제, 라이브 키면 실결제). 자체 사이트에서만 동작
 //  mode "payapp": 페이앱 결제창 (사업자 없는 개인 판매자 가능). payappUserId 에 페이앱 판매자 아이디. 자체 사이트에서만 동작
-const PAY={mode:"groble",grobleLink:"https://www.groble.im/payment/JYyVkR",tossClientKey:"",payappUserId:"",shopName:"우리 아이 진로 사주",confirmUrl:"/.netlify/functions/confirm",amount:9900,orderName:"우리 아이 진로 리포트 (9장 45풀이)"};
+const PAY={mode:"groble",grobleLink:"https://www.groble.im/payment/JYyVkR",tossClientKey:"",payappUserId:"",shopName:"우리 아이 진로 사주",confirmUrl:"/.netlify/functions/confirm",amount:12900,orderName:"우리 아이 진로 리포트 (9장 45풀이)"};
 // 상호 및 사업자 정보 (당근 광고 심사용). 비워 둔 항목은 화면에 나오지 않습니다
 const BIZ={name:"운세 상담소",owner:"",regNo:"",mailOrderNo:"",tel:"",email:"",addr:""};
 const SELLER_PIN_HASH=1359452237;   // 판매자 비밀번호의 해시값 (원문은 페이지에 넣지 않음)

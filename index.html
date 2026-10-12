@@ -1010,11 +1010,11 @@ function textLen(ch){return ch.reduce((n,c)=>n+c.items.reduce((m,i)=>m+i.h.repla
 function summaryHTML(A,ch){const a=A.nick,s27=A.r.seun(2027),w=A.workPct>=60?"직장인형":A.workPct<=40?"사업가형":"전문가·프리랜서형";
  const rows=[["타고난 기운",`${A.dm.img.split(" · ")[0]} · ${A.dm.short}`],["핵심 재능",`${GRP[A.gOrder[0]].type} (${GRP[A.gOrder[0]].label})`],["적성 1·2위",`${A.fieldsSorted[0].name}, ${A.fieldsSorted[1].name}`],["추천 직업",A.top.slice(0,3).map(j=>j.t).join(" / ")],["일하는 체질",w],["2027년 키워드",MONTH_GOD[s27.gs]],["채우면 좋은 기운",`${A.useful}(${EL[A.useful].hj}) · ${EL[A.useful].color}`]];
  return `<section class="card summary"><div class="eyebrow">한눈에 보는 ${a}</div><h2>${fill(A.dm.key,a)}</h2><dl>${rows.map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl></section>`;}
-function coverHTML(A,inp,timeTxt){const order=A.r.P.hour?["hour","day","month","year"]:["day","month","year"];
+function coverHTML(A,inp,timeTxt,total){const order=A.r.P.hour?["hour","day","month","year"]:["day","month","year"];
  return `<section class="cover"><div class="cv-top">사주로 보는 진로 성향 리포트</div><h1>${esc(inp.name?A.nick:"우리 아이")}의<br>진로 리포트</h1><p class="cv-sub">우리 아이는 어떤 일을 할 때 가장 빛날까?</p><div class="cv-dots" aria-hidden="true"><i style="background:#5DB86F"></i><i style="background:#E8735F"></i><i style="background:#D9AE4E"></i><i style="background:#C9D1D6"></i><i style="background:#6E95CF"></i></div>
  <div class="cv-pil">${order.map(k=>{const [s,b]=A.r.P[k];return `<div><span class="e-${STEM_EL[s]}">${STEMS[s]}</span><span class="e-${BR_EL[b]}">${BR[b]}</span><em>${PILLAR_MEAN[k][0]}</em></div>`;}).join("")}</div>
  <dl class="cv-info"><div><dt>생년월일</dt><dd>${inp.y}년 ${inp.m}월 ${inp.d}일 (양력)</dd></div><div><dt>태어난 시간</dt><dd>${timeTxt}</dd></div><div><dt>성별</dt><dd>${inp.g==="M"?"남자":"여자"}</dd></div><div><dt>발행일</dt><dd>${new Date().getFullYear()}년 ${new Date().getMonth()+1}월 ${new Date().getDate()}일</dd></div></dl>
- <p class="cv-foot">운세 상담소 · 9개 장 · ${A.r.P.hour?"":"(시주 제외) · "}맞춤 풀이 리포트</p></section>`;}
+ <p class="cv-foot">운세 상담소 · ${total?`총 ${total}페이지 · `:""}${A.r.P.hour?"":"(시주 제외) · "}맞춤 풀이 리포트</p></section>`;}
 </script>
 <script>
 // ===== 판매 설정 (여기만 바꾸면 됩니다) =====
@@ -1163,8 +1163,8 @@ function renderReport(){
   <div class="stat"><span>${nCh}개 장 + 부록</span><span>${nItems}가지 풀이</span><span>${nChars.toLocaleString()}자 분량</span></div>
  </section>`;
  const P=[];
- if(u){P.push({t:"표지",h:paidNote()+pdfBar()+coverHTML(A,st.inp,timeText(st.inp))});P.push({t:"한눈에 보기",h:summaryHTML(A,ch)});}
- if(!u)P.push({t:"표지",h:coverHTML(A,st.inp,timeText(st.inp))});
+ if(u){P.push({t:"표지",h:paidNote()+pdfBar()+coverHTML(A,st.inp,timeText(st.inp),ch.length+4)});P.push({t:"한눈에 보기",h:summaryHTML(A,ch)});}
+ if(!u)P.push({t:"표지",h:coverHTML(A,st.inp,timeText(st.inp),ch.length+4)});
  P.push({t:"사주 원국",h:prof},{t:"적성 지도",h:fields});
  ch.forEach((c,ci)=>P.push({t:`${lbl(c,ci)} · ${c.t}`,h:chap(c,ci)}));
  // 결제 화면은 맨 아래에 한 번만 (중간에 끼우지 않음)

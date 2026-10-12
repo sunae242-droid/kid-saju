@@ -176,6 +176,8 @@ label.f{display:grid;gap:6px;font-size:13px;color:var(--muted);font-weight:500}
 .locked{position:relative}
 .locked .fake{margin:0}
 .lockcap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.tease{display:grid;gap:8px;margin-top:6px}.tease p{font-size:15px;line-height:1.8;color:var(--ink)}
+.tcap{justify-self:start;display:inline-flex;gap:6px;align-items:center;padding:5px 12px;border-radius:99px;background:var(--mint);color:var(--mint-ink);font-size:13px;font-weight:700}
 .lockcap span{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700;display:flex;gap:6px;align-items:center;color:var(--mint-ink)}
 .pl-list,.el-list{padding-left:18px;margin:0;display:grid;gap:8px;font-size:14px}
 .pl-list span{color:var(--muted);font-size:12px}
@@ -1012,6 +1014,9 @@ function orderNo(i){let h=fnv(`${i.y}-${i.m}-${i.d}-${i.hk?i.h*60+i.mi:"x"}-${i.
 function codeFor(o){return String(fnv(o.toUpperCase()+"|"+SALT)%900000+100000);}
 function scramble(t){const a=[...t.replace(/\s+/g," ")];for(let i=a.length-1;i>0;i--){const j=(i*7919+13)%(i+1);[a[i],a[j]]=[a[j],a[i]];}return a.join("");}
 const strip=h=>h.replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim();
+// 잠긴 풀이 미리보기: 본문 첫 문장(최대 90자)만 뽑아 '…'으로 마무리
+function teaser(h){const d=document.createElement("div");d.innerHTML=h;const pp=[...d.querySelectorAll("p")].map(x=>x.textContent.replace(/\s+/g," ").trim()).find(x=>x.length>=20);const t=pp||d.textContent.replace(/\s+/g," ").trim();
+ const m=/^.{20,90}?(?:다|요|죠|니다)[.!?]/.exec(t);return (m?m[0]:t.slice(0,70))+" …";}
 const lockSVG='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
 
 function birthText(i){return `${i.y}년 ${i.m}월 ${i.d}일 ${timeText(i)}`;}
@@ -1101,10 +1106,11 @@ function renderReport(){
  const nItems=ch.reduce((n,c)=>n+c.items.length,0),nChars=ch.reduce((n,c)=>n+c.items.reduce((m,i)=>m+strip(i.h).length,0),0);
  const chap=(c,ci)=>{
   const items=c.items.map((it,ii)=>{
-   const fi=Math.max(0,c.items.findIndex(x=>x.free));const open=u||ii===fi;
-   const inner=open?it.h:`<div class="locked"><p class="fake" aria-hidden="true">${scramble(strip(it.h)).slice(0,ii===fi+1||(fi>0&&ii===0)?260:140)}</p><div class="lockcap"><span>${lockSVG} 결제 후 바로 공개</span></div></div>`;
+   // 무료 미리보기: 1장은 전부 공개, 2장부터는 장마다 풀이 1개 공개 + 나머지는 첫 문장만 또렷하게 (흐림 없음)
+   const fi=Math.max(0,c.items.findIndex(x=>x.free));const open=u||ci===0||ii===fi;
+   const inner=open?it.h:`<div class="tease"><p>${esc(teaser(it.h))}</p><div class="tcap">${lockSVG} 이어지는 풀이는 결제 후 공개</div></div>`;
    return `<div class="ritem"><h3><b>풀이${ii+1}</b>${it.t}</h3>${inner}</div>`;}).join("");
-  return `<section class="rchap"><div class="ch-no">${ci+1}장</div><h2>${c.t}</h2>${items}${u?"":`<button type="button" class="more" data-buy>🔒 그 외 ${c.items.length-1}가지 풀이 · 결제하고 보기</button>`}</section>`;};
+  return `<section class="rchap"><div class="ch-no">${ci+1}장</div><h2>${c.t}</h2>${items}${u||ci===0?"":`<button type="button" class="more" data-buy>🔒 그 외 ${c.items.length-1}가지 풀이 · 결제하고 보기</button>`}</section>`;};
  const prof=`<section class="card prof">
   <div class="kw"><small>${esc(st.inp.name||"우리 아이")} · ${birthText(st.inp)} · ${st.inp.g==="M"?"남":"여"}</small>${dmKey(A)}</div>
   ${chartHTML(A)}

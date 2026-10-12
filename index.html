@@ -1083,7 +1083,7 @@ function bizInfo(){const r=[["대표자",BIZ.owner],["사업자등록번호",BIZ
 function footer(){return `<div class="foot">${bizInfo()}<p>사주 풀이는 아이를 이해하기 위한 참고 자료이며, 진로 결정은 아이의 흥미와 경험을 함께 살펴 주세요.</p><div class="links"><button type="button" onclick="renderHome();scrollTo(0,0)">처음으로</button> · <a href="mailto:sunae242@gmail.com?subject=${encodeURIComponent("[우리 아이 진로 사주] 문의")}">판매자</a></div></div>`;}
 
 // ---------- 미리보기 / 전체 ----------
-// 무료 미리보기에서는 별명을 첫 글자만 남기고 가림 (예: 홍길동 → 홍**). 결제 후에는 그대로
+// 이름 가리기(예: 홍길동 → 홍**) — 지금은 무료 미리보기에서도 이름을 그대로 보여 줘서 쓰지 않아요
 function maskName(n){n=[...(n||"").trim()];return n.length<2?n.join(""):n[0]+"*".repeat(n.length-1);}
 function openPreview(inp){
  st.real=inp;st.inp=inp;st.pg=0;
@@ -1093,7 +1093,7 @@ function openPreview(inp){
  renderReport();scrollTo(0,0);
 }
 function renderReport(){
- const u=st.unlocked,show=u||st.real.demo?st.real:{...st.real,name:maskName(st.real.name)};
+ const u=st.unlocked,show=st.real;   // 무료 미리보기에서도 이름을 가리지 않고 그대로 보여 줌
  if(st.inp!==show||!st.A){st.inp=show;st.A=analyze(show);st.ch=buildReport(st.A);}
  const A=st.A,ch=st.ch,a=A.nick;
  const nItems=ch.reduce((n,c)=>n+c.items.length,0),nChars=ch.reduce((n,c)=>n+c.items.reduce((m,i)=>m+strip(i.h).length,0),0);

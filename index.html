@@ -184,6 +184,14 @@ label.f{display:grid;gap:6px;font-size:13px;color:var(--muted);font-weight:500}
 .god{display:grid;gap:4px;padding:12px;background:var(--paper);border-radius:12px}
 .god small{color:var(--muted);font-weight:400;font-size:12px}
 .tags{display:flex;flex-wrap:wrap;gap:6px}
+.ani{display:grid;justify-items:center;gap:2px;padding:14px;border-radius:14px;background:var(--gold-bg)}
+.ani span{font-size:56px;line-height:1.15}
+.ani b{font-family:var(--display);font-size:19px;color:var(--ink)}
+.manual{display:grid;gap:8px}
+.manual div{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start;padding:12px;border-radius:12px;background:var(--mint)}
+.manual span{font-size:22px;line-height:1.3}
+.manual p{margin:0;font-size:14px;line-height:1.7}
+.manual p b{display:block;font-size:13px;color:var(--mint-ink)}
 .tags span{border:1px solid var(--teal);color:var(--mint-ink);border-radius:99px;padding:4px 12px;font-size:13px}
 .scales{display:grid;gap:14px}
 .scl{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
@@ -260,7 +268,7 @@ label.f{display:grid;gap:6px;font-size:13px;color:var(--muted);font-weight:500}
  .cv-info{max-width:380px!important;font-size:16px!important}.cv-foot{font-size:13px!important}
  .summary{border:0;margin-bottom:12px}
  .rchap{break-before:page;border:0}.rchap.nobreak{break-before:auto;break-inside:avoid}.prof{break-inside:avoid}
- .ritem,.job,.god,.cau,.yr{break-inside:avoid}
+ .ritem,.job,.god,.cau,.yr,.ani,.manual div{break-inside:avoid}
  *{animation:none!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
  @page{size:A4;margin:14mm 14mm}
 }
@@ -798,6 +806,30 @@ function nickOf(name){
  return name;
 }
 const fill=(s,a)=>s.replace(/\{a\}/g,a);
+// 1장 '닮은 동물' — [이모지, 동물, 설명1, 설명2] (일간 순서: 갑을병정무기경신임계)
+const ANIMAL=[
+ ["🦁","아기 사자","{a}는 무리 맨 앞에서 길을 여는 아기 사자를 닮았습니다. ‘내가 먼저 해 볼래!’가 입버릇이고, 친구들이 자연스럽게 {a}의 뒤를 따라옵니다.","약한 친구를 지켜 주는 의리도 사자다운 모습입니다. 다만 자존심이 다치면 갈기를 세우고 한동안 고집을 부리니, 이럴 땐 꾸중보다 ‘네 생각은 어때?’ 한마디가 훨씬 잘 통합니다."],
+ ["🐿️","다람쥐","{a}는 어디서든 금세 길을 찾아내는 다람쥐를 닮았습니다. 새 교실, 새 친구에도 빠르게 적응하고 분위기를 읽는 눈치가 아주 빠릅니다.","작고 부드러워 보여도 도토리를 차곡차곡 모으듯 끈기 있게 실력을 쌓아 갑니다. 손끝이 야무져서 만들고 꾸미는 일에 특히 반짝입니다."],
+ ["🐬","돌고래","{a}는 어디서나 분위기를 띄우는 돌고래를 닮았습니다. 밝고 다정해서 친구가 많고, 함께 노는 시간에 가장 행복해합니다.","박수와 응원이 있으면 더 높이 뛰어오르는 아이입니다. 반복되는 일은 금방 지루해하니, 목표를 작은 점프로 나눠 주면 끝까지 신나게 헤엄쳐 갑니다."],
+ ["🦉","부엉이","{a}는 조용히 지켜보다가 꼭 필요한 순간에 눈을 반짝이는 부엉이를 닮았습니다. 말수는 적어도 속으로는 많은 것을 보고 느끼고 있습니다.","한 가지에 빠지면 시간 가는 줄 모르는 집중파입니다. 마음을 연 사람에게는 누구보다 따뜻하고 깊은 이야기를 꺼내 놓습니다."],
+ ["🐘","아기 코끼리","{a}는 듬직한 아기 코끼리를 닮았습니다. 쉽게 흔들리지 않고, 친구들이 고민이 있을 때 먼저 찾아와 기대는 아이입니다.","한번 정한 길은 묵묵히 지켜 가는 뚝심이 있습니다. 대신 갑작스러운 변화에는 발걸음이 느려지니, 미리 알려 주고 준비할 시간을 주면 든든하게 해냅니다."],
+ ["🐝","꿀벌","{a}는 부지런하고 꼼꼼한 꿀벌을 닮았습니다. 필요한 것을 알아서 챙기고, 가족과 친구를 돌보는 일에서 보람을 느낍니다.","작은 노력을 하나하나 모아 결국 달콤한 결과를 만들어 냅니다. ‘네 덕분이야’라는 말을 들을 때 날개에 가장 힘이 붙습니다."],
+ ["🐯","아기 호랑이","{a}는 용감한 아기 호랑이를 닮았습니다. 결정이 빠르고 승부욕이 강해서, 도전 앞에서 물러서지 않습니다.","옳지 않은 일에는 정면으로 맞서는 정의파이기도 합니다. 넘치는 힘을 운동이나 대회처럼 마음껏 겨룰 곳에 쏟게 해 주면 멋진 승부사로 자랍니다."],
+ ["🐈","고양이","{a}는 깔끔하고 기준이 높은 고양이를 닮았습니다. 자기만의 취향이 분명하고, 마음에 드는 것은 끝까지 완벽하게 다듬으려 합니다.","처음엔 살짝 거리를 두지만, 믿는 사람에게는 누구보다 다정하게 곁을 내줍니다. 섬세한 솜씨를 알아봐 주면 눈빛부터 달라집니다."],
+ ["🐋","고래","{a}는 넓은 바다를 누비는 고래를 닮았습니다. 호기심이 끝이 없어서 어른도 깜짝 놀랄 질문을 툭툭 던집니다.","생각의 크기가 커서 작은 틀에 갇히면 답답해합니다. 새로운 곳을 탐험하고 마음껏 질문할 수 있을 때 지혜가 쑥쑥 자랍니다."],
+ ["🐰","토끼","{a}는 귀가 밝은 토끼를 닮았습니다. 다른 사람의 기분을 누구보다 빨리 알아채고, 슬퍼하는 친구 곁에 조용히 다가가는 아이입니다.","상상력이 풍부해서 그림, 글, 이야기 속에서 자기만의 세계를 만듭니다. 여려 보여도 조용히 제 길을 찾아가는 힘이 있습니다."]];
+// 1장 '사용설명서' — [충전될 때, 방전될 때, 이렇게 해 주세요]
+const MANUAL=[
+ ["스스로 정하고 앞장설 기회가 생길 때, 새로운 걸 처음 시작할 때 힘이 차오릅니다.","자기 방식이 이유 없이 꺾이거나, 사람들 앞에서 지적받을 때 힘이 빠집니다.","지시보다 질문으로 시작해 주세요. 선택권을 주면 책임감까지 함께 자랍니다."],
+ ["편안한 사람들과 함께하고, 예쁜 것을 만들고 꾸밀 때 힘이 차오릅니다.","분위기가 날카롭거나 다툼이 있을 때, 다른 아이와 비교당할 때 힘이 빠집니다.","새 환경에서는 적응할 시간을 조금 넉넉히 주세요. 익숙해지면 누구보다 유연하게 뻗어 갑니다."],
+ ["보여 줄 무대가 있을 때, 친구들과 신나게 어울리고 반응을 받을 때 힘이 차오릅니다.","혼자 오래 조용히 있어야 할 때, 열심히 했는데 아무도 봐 주지 않을 때 힘이 빠집니다.","결과보다 ‘보여 주는 순간’을 만들어 주세요. 가족 앞 발표회 하나가 최고의 동기부여가 됩니다."],
+ ["좋아하는 것에 푹 빠질 시간이 있을 때, 마음을 알아주는 한 사람이 곁에 있을 때 힘이 차오릅니다.","시끄럽고 정신없는 곳, 여러 가지를 한꺼번에 재촉받을 때 힘이 빠집니다.","몰입한 순간에는 끊지 말고 기다려 주세요. 집중이 끝난 뒤 이야기를 들어 주면 마음을 활짝 엽니다."],
+ ["믿고 맡겨 줄 때, 하루 일정이 예측 가능할 때 힘이 차오릅니다.","계획이 갑자기 바뀌거나, ‘빨리빨리’ 재촉받을 때 힘이 빠집니다.","바뀌는 일이 있으면 미리 예고해 주세요. 준비할 시간만 있으면 누구보다 든든하게 해냅니다."],
+ ["누군가를 도와주고 ‘고마워’라는 말을 들을 때, 손으로 직접 만들고 기를 때 힘이 차오릅니다.","애쓴 것이 당연하게 여겨지거나, 과정은 빼고 결과만 따질 때 힘이 빠집니다.","‘네 덕분에’라는 말을 자주 해 주세요. 돌봄이 인정받을 때 자신감이 단단해집니다."],
+ ["도전과 승부가 있을 때, 몸을 움직이며 공정한 규칙 속에서 겨룰 때 힘이 차오릅니다.","불공평하다고 느낄 때, 결정을 미루며 질질 끌 때 힘이 빠집니다.","규칙과 이유를 분명하게 말해 주세요. 납득만 되면 실행은 누구보다 빠릅니다."],
+ ["정리된 공간에서 자기 취향을 존중받을 때, 섬세한 솜씨를 칭찬받을 때 힘이 차오릅니다.","‘대충 해’라는 말, 다른 사람 앞에서 실수를 지적받을 때 힘이 빠집니다.","실수는 둘만 있을 때 조용히 이야기해 주세요. 체면이 지켜지면 스스로 더 높은 기준을 세웁니다."],
+ ["새로운 장소와 정보를 탐험할 때, 질문에 끝까지 답해 줄 때 힘이 차오릅니다.","‘그건 몰라도 돼’라는 말, 꽉 짜인 틀에 갇혀 있을 때 힘이 빠집니다.","엉뚱한 질문도 ‘좋은 질문이네!’로 받아 주세요. 호기심이 곧 이 아이의 공부 엔진입니다."],
+ ["조용하고 포근한 분위기에서 상상하고 그리고 쓸 때 힘이 차오릅니다.","큰 소리와 다툼이 있을 때, 속상한 마음을 ‘별거 아니야’로 넘길 때 힘이 빠집니다.","기분을 먼저 물어봐 주세요. 마음이 편해야 머리도 움직이는 아이입니다."]];
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 function analyze(inp){
@@ -866,22 +898,14 @@ function buildReport(A){
  const ip=A.inp, strongEl=A.elOrder[0], weakEl=A.missing[0]||A.elOrder[4];
  const pct=Math.round(r.strength*100);
  const ch=[];
- // 1장
- const pillarsTxt=Object.keys(PILLAR_MEAN).filter(k=>r.P[k]).map(k=>{const g=r.gods[k];
-   const gtxt=k==="day"?`일지 ${g.branch}: ${GOD_DESC[g.branch]}`:`${g.stem} · ${g.branch}: ${GOD_DESC[g.stem]} / ${GOD_DESC[g.branch]}`;
-   return `<li><b>${PILLAR_MEAN[k][0]} ${STEMS[r.P[k][0]]}${BR[r.P[k][1]]}</b> <span>${PILLAR_MEAN[k][1]}</span><br>${gtxt}</li>`;}).join("");
+ // 1장 — 사주 용어 없이 짧고 재미있게 (자세한 사주 풀이는 맨 뒤 부록으로)
+ const ani=ANIMAL[r.ds],man=MANUAL[r.ds],sc0=A.scales[0][2];
  ch.push({t:`${a}의 타고난 기질과 성격`,items:[
-  {t:"사주 원국으로 본 우리 아이",h:P(`${fill("{a}",a)}는 ${r.sy}년 ${STEMS[r.P.year[0]]}${BR[r.P.year[1]]}년에 태어났습니다. 사주팔자의 네 기둥은 각각 삶의 다른 영역을 보여 줍니다. 아래는 각 기둥에 담긴 십성(十星), 즉 ‘나와의 관계로 본 기운’입니다.`)+`<ul class="pl-list">${pillarsTxt}</ul>`+(r.P.hour?"":P("태어난 시간을 몰라 시주는 비워 두고 세 기둥(여섯 글자)으로 풀이했습니다. 시주는 주로 먼 미래와 노년의 흐름을 보여 주므로 진로 성향 해석에는 큰 영향이 없습니다."))},
-  {t:"사주 속 십성 이야기",h:P(`십성은 일간(나)을 기준으로 다른 글자들이 어떤 역할을 하는지 보여 주는 열 가지 별입니다. ${a}의 사주에 들어 있는 별을 하나씩 살펴보겠습니다.`)+Object.keys(r.godCount).sort((x,y)=>r.godCount[y]-r.godCount[x]).map(g=>`<div class="god"><b>${g} <small>${r.godCount[g]}개</small></b><p>${GOD_LONG[g]}</p></div>`).join("")+P(`이 가운데 개수가 많거나 월지에 자리한 별이 ${a}의 성격과 진로에 가장 큰 영향을 줍니다. ${a}에게는 ${jo(r.gods.month.branch,'이','가')} 월지에 있어 사회에서 쓰는 힘의 중심이 됩니다.`)},
+  {t:`한마디로 ${a}는?`,h:`<div class="luck"><div><em>타고난 자연</em><b>${dm.short}</b></div><div><em>에너지 타입</em><b>${A.strong?"직진형":"환경 반응형"}</b></div><div><em>충전 방식</em><b>${sc0>=55?"함께할 때":sc0<=45?"혼자일 때":"혼자·함께 모두"}</b></div></div>`+P(`${a}는 ${dm.short}의 기운을 품고 태어났습니다. 한마디로 <b>${fill(dm.key,a)}</b>입니다.`)+P(A.strong?`스스로 밀고 나가는 힘이 넘치는 ‘직진형’이라, 힘껏 달려 볼 무대가 있을 때 가장 신나게 자랍니다.`:`좋은 사람과 좋은 환경을 만나면 몇 배로 자라는 ‘환경 반응형’이라, 믿어 주는 어른 한 명이 무엇보다 큰 힘이 됩니다.`)},
+  {t:`${a}를 닮은 동물 · ${ani[1]}`,h:`<div class="ani"><span aria-hidden="true">${ani[0]}</span><b>${ani[1]}</b></div>`+P(fill(ani[2],a))+P(fill(ani[3],a))},
   {free:1,t:`일간 풀이 · ${dm.img}`,h:dm.p.map(x=>P(fill(x,a))).join("")},
-  {t:"태어난 계절의 기운",h:P(SEASON[r.P.month[1]])+P(`계절의 기운은 ${a}가 사회 속에서 어떤 방식으로 힘을 쓰는지를 보여 줍니다. 월지는 부모와 학교, 사회와 만나는 자리이기 때문에 진로를 볼 때 가장 중요하게 보는 글자입니다. ${a}의 월지에는 ${r.gods.month.branch}의 기운이 있어 ${GOD_DESC[r.gods.month.branch]}이 사회생활의 바탕이 됩니다.`)},
-  {t:"속마음과 생활 습관",h:P(DAY_BRANCH[r.P.day[1]])+P(`일지는 일간 바로 아래, 가장 가까운 자리라서 ${a}의 속마음과 집에서의 모습을 보여 줍니다. 밖에서 보이는 모습과 집에서의 모습이 다르게 느껴진다면 이 일지의 기운 때문인 경우가 많습니다.`)},
-  {t:"오행 밸런스 · 강한 기운과 채울 기운",h:elBars(A)+P(`${a}의 사주에서는 ${EL[strongEl].strong}`)+P(A.missing.length?`반면 ${A.missing.map(e=>e+"("+EL[e].hj+")").join("·")} 기운은 원국에 보이지 않습니다. ${EL[weakEl].weak}`:`다섯 가지 기운이 모두 갖춰져 있어 어느 환경에서도 무난히 적응하는 균형형입니다. 그중 상대적으로 약한 쪽은 ${weakEl}(${EL[weakEl].hj})입니다. ${EL[weakEl].weak}`)+`<ul class="el-list">${ELS.filter(e=>e!==strongEl&&e!==weakEl).map(e=>`<li>${r.count[e]>=3?EL[e].strong:EL_MID[e]}</li>`).join("")}</ul>`+P(`오행의 균형은 타고난 것이지만 고정된 것은 아닙니다. 해마다 들어오는 운과 생활 습관에 따라 부족한 기운은 채우고 넘치는 기운은 덜어 낼 수 있습니다.`)},
-  {t:"성향 지도 · 우리 아이는 어느 쪽?",h:scaleHTML(A.scales)+P(`${a}는 ${A.scales[0][2]>=55?"사람들 속에서 에너지를 얻는":A.scales[0][2]<=45?"혼자만의 시간에서 에너지를 채우는":"혼자와 함께를 오가며 균형을 잡는"} 아이입니다. 또 ${A.scales[1][2]>=55?"새롭고 변화가 많은 환경에서 눈이 반짝이고":A.scales[1][2]<=45?"예측 가능하고 안정적인 환경에서 실력을 발휘하고":"안정과 변화 사이에서 상황에 맞게 적응하고"}, ${A.scales[2][2]>=55?"생각보다 몸이 먼저 움직이는 실행파입니다.":A.scales[2][2]<=45?"충분히 생각하고 확신이 선 뒤 움직이는 신중파입니다.":"생각과 행동의 속도가 고르게 맞는 편입니다."}`)+P(`이 성향은 좋고 나쁨이 아니라 ‘에너지를 쓰는 방식’입니다. ${a}에게 맞는 방식으로 공부와 활동을 설계해 주면 같은 노력으로도 훨씬 큰 결과를 냅니다.`)},
-  {t:"우리 아이 신살 이야기 · 역마 · 도화 · 화개",h:(()=>{const bs=Object.values(r.P).map(x=>x[1]);const grp={역마:[2,8,5,11],도화:[0,6,3,9],화개:[4,10,1,7]};
-   const out=Object.keys(grp).map(k=>{const n=bs.filter(b=>grp[k].includes(b)).length;return `<div class="god"><b>${SINSAL[k][0]} <small>${n?n+"개":"없음"} · ${SINSAL[k][1]}</small></b><p>${n?SINSAL[k][2]:SINSAL[k][0].slice(0,2)+"의 기운은 원국에 직접 드러나지 않습니다. 운에서 들어올 때 그 기운을 잠시 경험하게 됩니다."}</p></div>`;}).join("");
-   return P(`신살은 사주 속 지지 글자의 조합으로 보는 특별한 기운입니다. 진로와 관련이 깊은 세 가지를 살펴봅니다.`)+out;})()},
-  {t:`에너지의 크기 · ${A.strong?"신강(身强)":"신약(身弱)"} 사주`,h:P(`일간을 돕는 기운(비겁·인성)이 전체의 약 ${pct}%입니다. `+(A.strong?`${a}는 자기 힘이 충분한 신강 사주입니다. 스스로 밀고 나가는 힘이 좋아 어려운 목표에도 겁먹지 않고, 넘치는 에너지를 밖으로 써야 건강합니다. 이 에너지가 갈 곳이 없으면 고집이나 짜증으로 나타날 수 있으니 운동, 프로젝트, 리더 역할처럼 힘을 쏟을 무대를 만들어 주세요.`:`${a}는 주변의 기운에 민감하게 반응하는 신약 사주입니다. 약하다는 뜻이 아니라, 좋은 환경과 좋은 사람을 만나면 몇 배로 성장하는 ‘환경 반응형’이라는 뜻입니다. 믿어 주는 어른, 맞는 선생님, 편안한 공부 공간이 이 아이에게는 무엇보다 큰 힘입니다. 무리한 일정보다 충분한 휴식과 회복을 먼저 챙겨 주세요.`))+P(`${a}에게 도움이 되는 기운은 ${A.useful}(${EL[A.useful].hj})입니다. 6장에서 이 기운을 생활 속에서 채우는 방법을 자세히 안내합니다.`)}
+  {t:`${a} 사용설명서`,h:`<div class="manual">${[["🔋","이럴 때 충전돼요",man[0]],["🪫","이럴 때 방전돼요",man[1]],["💡","이렇게 해 주세요",man[2]]].map(([e,k,v])=>`<div><span aria-hidden="true">${e}</span><p><b>${k}</b>${fill(v,a)}</p></div>`).join("")}</div>`},
+  {t:"성향 지도 · 우리 아이는 어느 쪽?",h:scaleHTML(A.scales)+P(`${a}는 ${A.scales[0][2]>=55?"사람들 속에서 에너지를 얻는":A.scales[0][2]<=45?"혼자만의 시간에서 에너지를 채우는":"혼자와 함께를 오가며 균형을 잡는"} 아이입니다. 또 ${A.scales[1][2]>=55?"새롭고 변화가 많은 환경에서 눈이 반짝이고":A.scales[1][2]<=45?"예측 가능하고 안정적인 환경에서 실력을 발휘하고":"안정과 변화 사이에서 상황에 맞게 적응하고"}, ${A.scales[2][2]>=55?"생각보다 몸이 먼저 움직이는 실행파입니다.":A.scales[2][2]<=45?"충분히 생각하고 확신이 선 뒤 움직이는 신중파입니다.":"생각과 행동의 속도가 고르게 맞는 편입니다."}`)+P(`이 성향은 좋고 나쁨이 아니라 ‘에너지를 쓰는 방식’입니다. ${a}에게 맞는 방식으로 공부와 활동을 설계해 주면 같은 노력으로도 훨씬 큰 결과를 냅니다.`)}
  ]});
  // 2장
  const kw=[...new Set([...dm.strengths.slice(0,3),...G1.talent.match(/[가-힣]+력|[가-힣]+심/g)?.slice(0,2)||[]])].slice(0,5);
@@ -964,6 +988,21 @@ function buildReport(A){
   {t:"앞으로의 성장 로드맵",h:(()=>{const ages=[A.age+1,A.age+4,A.age+8];const seen=new Set();return `<ul class="du-list">${ages.map(x=>stageOf(x)).filter(s=>!seen.has(s.n)&&seen.add(s.n)).map(s=>`<li><b>${s.n}</b> ${s.tip}</li>`).join("")}</ul>`+P(`단계마다 ${a}의 주력 재능인 ‘${G1.label}’을 쓰는 경험을 하나씩 넣어 주세요. 같은 활동이라도 아이의 기질에 맞는 방식으로 하면 훨씬 오래, 즐겁게 이어 갑니다.`);})()},
   {t:"지금 부모님이 해 줄 일",h:P(stage.tip)+P(`${a}의 추천 직업 1·2순위인 ${A.top[0].t}와 ${A.top[1].t}의 ‘지금 해 볼 것’ 중 첫 단계를 이번 달 안에 하나 시작해 보세요. 사주는 방향을 알려 줄 뿐, 그 길을 걷게 하는 것은 작은 경험의 반복입니다.`)+P(`사주는 아이를 정해진 틀에 가두는 답안지가 아니라 아이가 어떤 기운을 타고났는지 이해하는 지도입니다. ${a}가 가진 ${kw[0]}과 ${kw[1]}이 가장 빛날 수 있는 길을 함께 찾는 데 이 리포트가 도움이 되기를 바랍니다.`)}
  ]});
+ // 부록 — 사주 자세히 보기 (원국·십성·오행·신살 등 전문 풀이)
+ const pillarsTxt=Object.keys(PILLAR_MEAN).filter(k=>r.P[k]).map(k=>{const g=r.gods[k];
+   const gtxt=k==="day"?`일지 ${g.branch}: ${GOD_DESC[g.branch]}`:`${g.stem} · ${g.branch}: ${GOD_DESC[g.stem]} / ${GOD_DESC[g.branch]}`;
+   return `<li><b>${PILLAR_MEAN[k][0]} ${STEMS[r.P[k][0]]}${BR[r.P[k][1]]}</b> <span>${PILLAR_MEAN[k][1]}</span><br>${gtxt}</li>`;}).join("");
+ ch.push({appx:1,t:"사주 자세히 보기",items:[
+  {t:"사주 원국으로 본 우리 아이",h:P(`${fill("{a}",a)}는 ${r.sy}년 ${STEMS[r.P.year[0]]}${BR[r.P.year[1]]}년에 태어났습니다. 사주팔자의 네 기둥은 각각 삶의 다른 영역을 보여 줍니다. 아래는 각 기둥에 담긴 십성(十星), 즉 ‘나와의 관계로 본 기운’입니다.`)+`<ul class="pl-list">${pillarsTxt}</ul>`+(r.P.hour?"":P("태어난 시간을 몰라 시주는 비워 두고 세 기둥(여섯 글자)으로 풀이했습니다. 시주는 주로 먼 미래와 노년의 흐름을 보여 주므로 진로 성향 해석에는 큰 영향이 없습니다."))},
+  {t:"사주 속 십성 이야기",h:P(`십성은 일간(나)을 기준으로 다른 글자들이 어떤 역할을 하는지 보여 주는 열 가지 별입니다. ${a}의 사주에 들어 있는 별을 하나씩 살펴보겠습니다.`)+Object.keys(r.godCount).sort((x,y)=>r.godCount[y]-r.godCount[x]).map(g=>`<div class="god"><b>${g} <small>${r.godCount[g]}개</small></b><p>${GOD_LONG[g]}</p></div>`).join("")+P(`이 가운데 개수가 많거나 월지에 자리한 별이 ${a}의 성격과 진로에 가장 큰 영향을 줍니다. ${a}에게는 ${jo(r.gods.month.branch,'이','가')} 월지에 있어 사회에서 쓰는 힘의 중심이 됩니다.`)},
+  {t:"태어난 계절의 기운",h:P(SEASON[r.P.month[1]])+P(`계절의 기운은 ${a}가 사회 속에서 어떤 방식으로 힘을 쓰는지를 보여 줍니다. 월지는 부모와 학교, 사회와 만나는 자리이기 때문에 진로를 볼 때 가장 중요하게 보는 글자입니다. ${a}의 월지에는 ${r.gods.month.branch}의 기운이 있어 ${GOD_DESC[r.gods.month.branch]}이 사회생활의 바탕이 됩니다.`)},
+  {t:"속마음과 생활 습관",h:P(DAY_BRANCH[r.P.day[1]])+P(`일지는 일간 바로 아래, 가장 가까운 자리라서 ${a}의 속마음과 집에서의 모습을 보여 줍니다. 밖에서 보이는 모습과 집에서의 모습이 다르게 느껴진다면 이 일지의 기운 때문인 경우가 많습니다.`)},
+  {t:"오행 밸런스 · 강한 기운과 채울 기운",h:elBars(A)+P(`${a}의 사주에서는 ${EL[strongEl].strong}`)+P(A.missing.length?`반면 ${A.missing.map(e=>e+"("+EL[e].hj+")").join("·")} 기운은 원국에 보이지 않습니다. ${EL[weakEl].weak}`:`다섯 가지 기운이 모두 갖춰져 있어 어느 환경에서도 무난히 적응하는 균형형입니다. 그중 상대적으로 약한 쪽은 ${weakEl}(${EL[weakEl].hj})입니다. ${EL[weakEl].weak}`)+`<ul class="el-list">${ELS.filter(e=>e!==strongEl&&e!==weakEl).map(e=>`<li>${r.count[e]>=3?EL[e].strong:EL_MID[e]}</li>`).join("")}</ul>`+P(`오행의 균형은 타고난 것이지만 고정된 것은 아닙니다. 해마다 들어오는 운과 생활 습관에 따라 부족한 기운은 채우고 넘치는 기운은 덜어 낼 수 있습니다.`)},
+  {t:"우리 아이 신살 이야기 · 역마 · 도화 · 화개",h:(()=>{const bs=Object.values(r.P).map(x=>x[1]);const grp={역마:[2,8,5,11],도화:[0,6,3,9],화개:[4,10,1,7]};
+   const out=Object.keys(grp).map(k=>{const n=bs.filter(b=>grp[k].includes(b)).length;return `<div class="god"><b>${SINSAL[k][0]} <small>${n?n+"개":"없음"} · ${SINSAL[k][1]}</small></b><p>${n?SINSAL[k][2]:SINSAL[k][0].slice(0,2)+"의 기운은 원국에 직접 드러나지 않습니다. 운에서 들어올 때 그 기운을 잠시 경험하게 됩니다."}</p></div>`;}).join("");
+   return P(`신살은 사주 속 지지 글자의 조합으로 보는 특별한 기운입니다. 진로와 관련이 깊은 세 가지를 살펴봅니다.`)+out;})()},
+  {t:`에너지의 크기 · ${A.strong?"신강(身强)":"신약(身弱)"} 사주`,h:P(`일간을 돕는 기운(비겁·인성)이 전체의 약 ${pct}%입니다. `+(A.strong?`${a}는 자기 힘이 충분한 신강 사주입니다. 스스로 밀고 나가는 힘이 좋아 어려운 목표에도 겁먹지 않고, 넘치는 에너지를 밖으로 써야 건강합니다. 이 에너지가 갈 곳이 없으면 고집이나 짜증으로 나타날 수 있으니 운동, 프로젝트, 리더 역할처럼 힘을 쏟을 무대를 만들어 주세요.`:`${a}는 주변의 기운에 민감하게 반응하는 신약 사주입니다. 약하다는 뜻이 아니라, 좋은 환경과 좋은 사람을 만나면 몇 배로 성장하는 ‘환경 반응형’이라는 뜻입니다. 믿어 주는 어른, 맞는 선생님, 편안한 공부 공간이 이 아이에게는 무엇보다 큰 힘입니다. 무리한 일정보다 충분한 휴식과 회복을 먼저 챙겨 주세요.`))+P(`${a}에게 도움이 되는 기운은 ${A.useful}(${EL[A.useful].hj})입니다. 9장 ‘부족한 기운 채우기’에서 이 기운을 생활 속에서 채우는 방법을 자세히 안내합니다.`)}
+ ]});
  return ch;
 }
 function textLen(ch){return ch.reduce((n,c)=>n+c.items.reduce((m,i)=>m+i.h.replace(/<[^>]+>/g,"").replace(/\s/g,"").length,0),0);}
@@ -985,7 +1024,7 @@ const PRICE="12,900원", LIST_PRICE="20,000원", SALE="36% 할인";
 //  mode "test" : 결제 흐름을 그대로 체험 (실제 돈이 나가지 않음)
 //  mode "toss" : 토스페이먼츠 결제창 (테스트 키면 테스트 결제, 라이브 키면 실결제). 자체 사이트에서만 동작
 //  mode "payapp": 페이앱 결제창 (사업자 없는 개인 판매자 가능). payappUserId 에 페이앱 판매자 아이디. 자체 사이트에서만 동작
-const PAY={mode:"groble",grobleLink:"https://www.groble.im/payment/JYyVkR",tossClientKey:"",payappUserId:"",shopName:"우리 아이 진로 사주",confirmUrl:"/.netlify/functions/confirm",amount:12900,orderName:"우리 아이 진로 리포트 (9장 45풀이)"};
+const PAY={mode:"groble",grobleLink:"https://www.groble.im/payment/JYyVkR",tossClientKey:"",payappUserId:"",shopName:"우리 아이 진로 사주",confirmUrl:"/.netlify/functions/confirm",amount:12900,orderName:"우리 아이 진로 리포트 (9장 48풀이)"};
 // 상호 및 사업자 정보 (당근 광고 심사용). 비워 둔 항목은 화면에 나오지 않습니다
 const BIZ={name:"운세 상담소",owner:"",regNo:"",mailOrderNo:"",tel:"",email:"",addr:""};
 const SELLER_PIN_HASH=1359452237;   // 판매자 비밀번호의 해시값 (원문은 페이지에 넣지 않음)
@@ -1028,7 +1067,7 @@ ${i.g==="M"?"남자아이":"여자아이"}`;}
 // ---------- 첫 화면 ----------
 function renderHome(){
  const last=null; // 입력칸은 항상 비워서 시작 (이전 입력값을 화면에 다시 띄우지 않음)
- const TOC=[["타고난 기질과 성격",["사주 원국과 십성 이야기","일간 풀이 · 우리 아이는 어떤 자연?","역마 · 도화 · 화개 신살"],3],["숨은 재능과 강점",["핵심 재능 유형 분석","다섯 가지 힘의 비율","재능이 빨리 자라는 환경"],2],["딱 맞는 진로와 직업",["6대 적성 지도 · 의료/법/IT/예술/경영/교육","추천 직업 TOP 5와 지금 해 볼 것","추천 학과 · 전공"],2],["공부 전략과 과목 적성",["과목별 적성 지도","타고난 공부 스타일","2027년 시험·대회에 좋은 달"],1],["직장인형일까, 사업가형일까?",["일하는 체질 진단","어울리는 조직과 성공 포인트"],1],["진로 흐름과 시기",["2026~2030 5년 흐름","2027 정미년 집중 분석 · 월별 흐름","10년 대운 흐름"],0],["친구 관계와 마음 건강",["친구 관계 스타일","스트레스 신호와 회복법"],1],["부모님이 가장 많이 묻는 질문",["의대 갈 수 있을까요?","예체능 시켜도 될까요?","유학 체질일까요?"],1],["부모님을 위한 가이드",["힘이 되는 말, 피해야 할 말","부족한 기운 채우기"],2]];
+ const TOC=[["타고난 기질과 성격",["한마디로 우리 아이는? · 닮은 동물","일간 풀이 · 우리 아이는 어떤 자연?","우리 아이 사용설명서 · 충전과 방전"],2],["숨은 재능과 강점",["핵심 재능 유형 분석","다섯 가지 힘의 비율","재능이 빨리 자라는 환경"],2],["딱 맞는 진로와 직업",["6대 적성 지도 · 의료/법/IT/예술/경영/교육","추천 직업 TOP 5와 지금 해 볼 것","추천 학과 · 전공"],2],["공부 전략과 과목 적성",["과목별 적성 지도","타고난 공부 스타일","2027년 시험·대회에 좋은 달"],1],["직장인형일까, 사업가형일까?",["일하는 체질 진단","어울리는 조직과 성공 포인트"],1],["진로 흐름과 시기",["2026~2030 5년 흐름","2027 정미년 집중 분석 · 월별 흐름","10년 대운 흐름"],0],["친구 관계와 마음 건강",["친구 관계 스타일","스트레스 신호와 회복법"],1],["부모님이 가장 많이 묻는 질문",["의대 갈 수 있을까요?","예체능 시켜도 될까요?","유학 체질일까요?"],1],["부모님을 위한 가이드",["힘이 되는 말, 피해야 할 말","부족한 기운 채우기"],2],["사주 자세히 보기",["사주 원국과 십성 이야기","오행 밸런스 · 신강/신약","역마 · 도화 · 화개 신살"],4,"부록"]];
  const HP=[{t:"소개",h:`
  <section class="hero">
   <div class="eyebrow">생년월일로 보는 아이 진로 리포트</div>
@@ -1040,8 +1079,8 @@ function renderHome(){
  </section>`},{t:"궁금한 것",h:`
  <section class="hooks">${HOOKS.map(h=>`<div class="hook"><h3>${h.q}<small>${h.a}</small></h3><p class="fake" aria-hidden="true">${scramble(DM[(h.q.length*3)%10].p[1])}</p></div>`).join("")}</section>`},{t:"목차",h:`
  <section class="toc">
-  <div class="toc-h"><h2>우리 아이 진로 리포트 목차</h2><p class="small">9개 장 · 45가지 풀이 · 표지와 한눈에 보는 요약까지, 아이마다 1만 3천 자 안팎의 맞춤 풀이</p></div>
-  ${TOC.map((c,i)=>`<div class="chap"><div class="ch-no">${i+1}장</div><h2>${c[0]}</h2><ul class="items">${c[1].map((t,k)=>`<li><b>풀이${k+1}</b>${t}</li>`).join("")}</ul>${c[2]?`<button type="button" class="more" data-go="f">+ 그 외 ${c[2]}가지 풀이 추가 제공</button>`:""}</div>`).join("")}
+  <div class="toc-h"><h2>우리 아이 진로 리포트 목차</h2><p class="small">9개 장 + 부록 · 48가지 풀이 · 표지와 한눈에 보는 요약까지, 아이마다 1만 3천 자 안팎의 맞춤 풀이</p></div>
+  ${TOC.map((c,i)=>`<div class="chap"><div class="ch-no">${c[3]||`${i+1}장`}</div><h2>${c[0]}</h2><ul class="items">${c[1].map((t,k)=>`<li><b>풀이${k+1}</b>${t}</li>`).join("")}</ul>${c[2]?`<button type="button" class="more" data-go="f">+ 그 외 ${c[2]}가지 풀이 추가 제공</button>`:""}</div>`).join("")}
  </section>`},{t:"무료 미리보기",actLabel:"무료로 미리보기",act:()=>submitForm(),h:`
  <form class="card fcompact" id="f" novalidate>
   <h2>무료 미리보기</h2>
@@ -1103,14 +1142,14 @@ function renderReport(){
  const u=st.unlocked,show=st.real;   // 무료 미리보기에서도 이름을 가리지 않고 그대로 보여 줌
  if(st.inp!==show||!st.A){st.inp=show;st.A=analyze(show);st.ch=buildReport(st.A);}
  const A=st.A,ch=st.ch,a=A.nick;
- const nItems=ch.reduce((n,c)=>n+c.items.length,0),nChars=ch.reduce((n,c)=>n+c.items.reduce((m,i)=>m+strip(i.h).length,0),0);
+ const nCh=ch.filter(c=>!c.appx).length,lbl=(c,ci)=>c.appx?"부록":`${ci+1}장`,nItems=ch.reduce((n,c)=>n+c.items.length,0),nChars=ch.reduce((n,c)=>n+c.items.reduce((m,i)=>m+strip(i.h).length,0),0);
  const chap=(c,ci)=>{
   const items=c.items.map((it,ii)=>{
    // 무료 미리보기: 1장은 전부 공개, 2장부터는 장마다 풀이 1개 공개 + 나머지는 첫 문장만 또렷하게 (흐림 없음)
    const fi=Math.max(0,c.items.findIndex(x=>x.free));const open=u||ci===0||ii===fi;
    const inner=open?it.h:`<div class="tease"><p>${esc(teaser(it.h))}</p><div class="tcap">${lockSVG} 이어지는 풀이는 결제 후 공개</div></div>`;
    return `<div class="ritem"><h3><b>풀이${ii+1}</b>${it.t}</h3>${inner}</div>`;}).join("");
-  return `<section class="rchap"><div class="ch-no">${ci+1}장</div><h2>${c.t}</h2>${items}${u||ci===0?"":`<button type="button" class="more" data-buy>🔒 그 외 ${c.items.length-1}가지 풀이 · 결제하고 보기</button>`}</section>`;};
+  return `<section class="rchap"><div class="ch-no">${lbl(c,ci)}</div><h2>${c.t}</h2>${items}${u||ci===0?"":`<button type="button" class="more" data-buy>🔒 그 외 ${c.items.length-1}가지 풀이 · 결제하고 보기</button>`}</section>`;};
  const prof=`<section class="card prof">
   <div class="kw"><small>${esc(st.inp.name||"우리 아이")} · ${birthText(st.inp)} · ${st.inp.g==="M"?"남":"여"}</small>${dmKey(A)}</div>
   ${chartHTML(A)}
@@ -1121,14 +1160,15 @@ function renderReport(){
   <div class="ch-no">${u?"적성 요약":"미리보기"}</div><h2>${a}의 6대 적성 지도</h2>
   ${fieldsHTML(A,!u)}
   <p class="small">${u?"상세 해석은 3장에 있습니다.":`1·2위 분야와 추천 직업 TOP 5는 전체 리포트에서 공개됩니다.`}</p>
-  <div class="stat"><span>${ch.length}개 장</span><span>${nItems}가지 풀이</span><span>${nChars.toLocaleString()}자 분량</span></div>
+  <div class="stat"><span>${nCh}개 장 + 부록</span><span>${nItems}가지 풀이</span><span>${nChars.toLocaleString()}자 분량</span></div>
  </section>`;
  const P=[];
  if(u){P.push({t:"표지",h:paidNote()+pdfBar()+coverHTML(A,st.inp,timeText(st.inp))});P.push({t:"한눈에 보기",h:summaryHTML(A,ch)});}
  if(!u)P.push({t:"표지",h:coverHTML(A,st.inp,timeText(st.inp))});
  P.push({t:"사주 원국",h:prof},{t:"적성 지도",h:fields});
- ch.forEach((c,ci)=>{P.push({t:`${ci+1}장 · ${c.t}`,h:chap(c,ci)});if(!u&&ci===0)P.push({t:"전체 리포트 열기",h:`<div class="paynext"><b>여기까지 무료 미리보기예요</b><span>다음 장부터는 풀이 일부만 보여요. 결제하면 ${ch.length}개 장 ${nItems}가지 풀이가 모두 열려요.</span></div>`+buyBox(),pay:true});});
- if(!u)P.push({t:"전체 리포트 열기",h:buyBox(),pay:true});
+ ch.forEach((c,ci)=>P.push({t:`${lbl(c,ci)} · ${c.t}`,h:chap(c,ci)}));
+ // 결제 화면은 맨 아래에 한 번만 (중간에 끼우지 않음)
+ if(!u)P.push({t:"전체 리포트 열기",h:`<div class="paynext"><b>여기까지 무료 미리보기예요</b><span>결제하면 ${nCh}개 장과 부록, ${nItems}가지 풀이가 모두 열려요.</span></div>`+buyBox(),pay:true});
  P[P.length-1].h+=footer();
  const head=`<div class="hdr"><b>${BIZ.name}</b><span>${st.inp.test?"테스트":st.inp.demo?"예시 리포트":u?"전체 리포트":"무료 미리보기"}</span></div>`;
  mountPager(P,head,{counter:true,last:()=>{if(P[P.length-1].pay)openPay();}});
@@ -1254,7 +1294,7 @@ function buyBox(){return `
   <div class="eyebrow">전체 리포트</div>
   <h2>${st.A.nick}의 진로 리포트 전체 보기</h2>
   <div class="price"><s>정가 ${LIST_PRICE}</s><b>${PRICE}</b><span>${SALE}</span></div>
-  <ul class="incl"><li>9개 장 · 45가지 풀이 전체 공개</li><li>컬러 표지 + 한눈에 보는 요약</li><li>결제 즉시 바로 열람 · 다시 보기 링크 제공</li></ul>
+  <ul class="incl"><li>9개 장 + 부록 · 48가지 풀이 전체 공개</li><li>컬러 표지 + 한눈에 보는 요약</li><li>결제 즉시 바로 열람 · 다시 보기 링크 제공</li></ul>
   <button class="btn gold" type="button" data-pay>${PRICE} 결제하고 전체 보기</button>
   <p class="small" style="text-align:center">카드 · 카카오페이 · 토스페이 · 네이버페이 · 휴대폰 결제</p>
  </section>`;}

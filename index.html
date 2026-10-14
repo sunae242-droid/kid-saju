@@ -106,14 +106,18 @@ html.flow #pages>.page:first-child{min-height:calc(100svh - 56px);display:flex;f
 .done{display:grid;gap:8px;text-align:center;padding:20px 14px;border-radius:14px;background:var(--mint);color:var(--mint-ink)}
 .done b{font-size:18px}
 .price span{font-size:12px;background:var(--gold-bg);color:var(--gold);padding:2px 8px;border-radius:99px;font-weight:700}
-.pitch{display:grid;gap:12px;margin-top:6px;padding:22px 18px;border-radius:18px;background:linear-gradient(160deg,#1E5A57,#17413F);color:#F6F1E4}
+.pitch{display:grid;gap:14px;margin-top:6px;padding:22px 18px;border-radius:18px;background:linear-gradient(160deg,#1E5A57,#17413F);color:#F6F1E4}
 .pitch .pt-k{font-size:13px;font-weight:700;color:#E2B456;letter-spacing:.04em}
 .pitch h2{font-size:23px;line-height:1.4;color:#fff}.pitch h2 em{font-style:normal;color:#E2B456}
 .pitch p{color:#E4EBE7}.pitch p b{color:#fff}
-.pitch ul{list-style:none;margin:2px 0;padding:0;display:grid;gap:10px}
-.pitch li{padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.1);display:grid;gap:2px}
-.pitch li b{color:#fff;font-size:16px}.pitch li span{font-size:14px;color:#D5E0DB}
-.pitch .pt-end{margin-top:4px}.pitch .btn{width:100%}
+.pt-chart{display:grid;grid-template-columns:140px 1fr;gap:10px;align-items:center;padding:12px;border-radius:14px;background:rgba(255,255,255,.1)}
+.pt-svg svg{width:100%;height:auto;display:block}
+.pt-bars{display:grid;gap:8px;font-size:13px}.pt-bars em{font-style:normal;font-size:11px;color:#E2B456}
+.pt-bars div{display:grid;gap:3px}.pt-bars i{display:block;height:8px;border-radius:4px;background:rgba(255,255,255,.18);overflow:hidden}
+.pt-bars b{display:block;height:100%;background:#E2B456;border-radius:4px}.pt-bars i.bl{filter:blur(3px)}
+.pt-lock{display:grid;gap:10px}.pt-lock>div{padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.1)}
+.pt-lock b{color:#fff;font-size:15px;line-height:1.4}.pt-lock .blur{margin-top:6px;font-size:14px;filter:blur(4.5px);user-select:none}
+.pitch .pt-end{margin-top:2px}.pitch .btn{width:100%}
 .hooks{display:grid;gap:22px;padding-block:22px}
 .hook h3{font-size:19px}
 .hook h3 small{display:block;font-size:16px;font-weight:400;color:var(--muted);font-family:var(--body)}
@@ -1119,16 +1123,21 @@ function renderHome(){
  </section>`},{t:"궁금한 것",h:`
  <section class="hooks">${HOOKS.map(h=>`<div class="hook"><h3>${h.q}<small>${h.a}</small></h3><p class="fake" aria-hidden="true">${scramble(DM[(h.q.length*3)%10].p[1])}</p></div>`).join("")}</section>
  <section class="pitch">
-  <div class="pt-k">이런 고민, 해 보셨죠?</div>
-  <h2>학원은 늘어나는데,<br><em>정작 아이가 뭘 좋아하는지</em><br>모르겠다면</h2>
-  <p>같은 공부를 시켜도 어떤 아이는 쑥쑥 크고, 어떤 아이는 금방 지칩니다. 타고난 기질을 알면 <b>무엇을 시킬지보다 어떻게 도와줄지</b>가 보여요.</p>
-  <ul>
-   <li><b>우리 아이만의 리포트</b><span>생년월일로 이름까지 넣어 만드는 맞춤 풀이, 아이마다 다르게 풀어 드려요</span></li>
-   <li><b>추천 직업·학과와 공부 방법</b><span>잘 맞는 분야와 과목, 공부 스타일까지 한 번에 확인해요</span></li>
-   <li><b>부모님이 바로 쓰는 한마디</b><span>힘이 되는 말, 피해야 할 말을 아이 기질에 맞춰 알려 드려요</span></li>
-   <li><b>돈 습관과 투자 성향까지</b><span>용돈 교육에 도움이 되는 우리 아이의 돈 성향도 담았어요</span></li>
-  </ul>
-  <p class="pt-end">궁금증은 아래 목차를 보고, 결과는 <b>무료 미리보기</b>로 먼저 확인해 보세요.</p>
+  <div class="pt-k">학원 전에, 우리 아이 기질부터</div>
+  <h2>같은 공부, 같은 학원인데<br><em>왜 우리 아이만 다를까요?</em></h2>
+  <p>타고난 기질을 알면 <b>어떻게 도와줄지</b>가 보여요.</p>
+  <div class="pt-chart"><div class="pt-svg"><svg viewBox="0 0 200 200" role="img" aria-label="오행 균형 예시 그래프"><polygon points="100.0,65.0 133.3,89.2 120.6,128.3 79.4,128.3 66.7,89.2" fill="none" stroke="rgba(255,255,255,.25)"/><polygon points="100.0,30.0 166.6,78.4 141.1,156.6 58.9,156.6 33.4,78.4" fill="none" stroke="rgba(255,255,255,.25)"/><polygon points="100.0,40.5 136.6,88.1 128.8,139.6 83.5,122.7 56.7,85.9" fill="rgba(226,180,86,.35)" stroke="#E2B456" stroke-width="2"/><circle cx="100.0" cy="40.5" r="5" fill="#5DB86F"/><circle cx="136.6" cy="88.1" r="5" fill="#E8735F"/><circle cx="128.8" cy="139.6" r="5" fill="#D9AE4E"/><circle cx="83.5" cy="122.7" r="5" fill="#C9D1D6"/><circle cx="56.7" cy="85.9" r="5" fill="#6E95CF"/><text x="100.0" y="13.0" fill="#fff" font-size="13" text-anchor="middle" dominant-baseline="middle">목</text><text x="182.7" y="73.1" fill="#fff" font-size="13" text-anchor="middle" dominant-baseline="middle">화</text><text x="151.1" y="170.4" fill="#fff" font-size="13" text-anchor="middle" dominant-baseline="middle">토</text><text x="48.9" y="170.4" fill="#fff" font-size="13" text-anchor="middle" dominant-baseline="middle">금</text><text x="17.3" y="73.1" fill="#fff" font-size="13" text-anchor="middle" dominant-baseline="middle">수</text></svg></div>
+   <div class="pt-bars"><em>예시 화면</em>
+    <div><span>🎯 적성</span><i><b style="width:82%"></b></i></div>
+    <div><span>📚 공부 스타일</span><i><b style="width:64%"></b></i></div>
+    <div><span>🤝 친구 관계</span><i class="bl"><b style="width:48%"></b></i></div>
+    <div><span>💰 돈 성향</span><i class="bl"><b style="width:70%"></b></i></div>
+   </div></div>
+  <div class="pt-lock">
+   <div><b>🤝 친구 관계에서 우리 아이가 힘들어할 수 있는 포인트</b><p class="blur" aria-hidden="true">우리 아이는 마음을 표현하는 속도가 느려서 친구들 사이에서 오해를 받을 수 있고 처음 만난 친구에게는 먼저 다가가는 데 시간이</p></div>
+   <div><b>🌱 부모님이 미리 알면 도와줄 수 있는 말과 행동</b><p class="blur" aria-hidden="true">이런 기질의 아이에게는 이렇게 말해 주면 마음이 열리고 이런 말은 피해 주는 것이 좋습니다 그리고 이런 활동이</p></div>
+  </div>
+  <p class="pt-end">미리 알면 부모가 도와줄 수 있어요.<br>지금 <b>무료 미리보기</b>로 먼저 확인해 보세요.</p>
   <button type="button" class="btn gold" data-go="f">우리 아이 무료로 미리보기</button>
  </section>`},{t:"목차",h:`
  <section class="toc">

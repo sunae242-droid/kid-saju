@@ -91,6 +91,7 @@ a.btn[aria-disabled="true"]{opacity:.5}
 }
 html.flow .page{padding-block:14px 26px;border-bottom:6px solid var(--line)}html.flow .page:last-child{border-bottom:0}html.flow .pghead{display:none}
 html.flow .wrap{padding-bottom:28px}
+html.flow #pages>.page:first-child{min-height:calc(100svh - 56px);display:flex;flex-direction:column;justify-content:center}
 .flowonly{display:none!important}html.flow .flowonly{display:block!important}
 .launchnote{text-align:center;font-weight:700;font-size:14px;color:var(--ink,#333);margin-top:18px}.launchnote+.scrollhint{margin-top:8px}
 .scrollhint{text-align:center;color:var(--muted);font-size:13px;margin-top:18px;animation:bob 1.6s ease-in-out infinite}@keyframes bob{50%{transform:translateY(4px)}}
@@ -105,6 +106,14 @@ html.flow .wrap{padding-bottom:28px}
 .done{display:grid;gap:8px;text-align:center;padding:20px 14px;border-radius:14px;background:var(--mint);color:var(--mint-ink)}
 .done b{font-size:18px}
 .price span{font-size:12px;background:var(--gold-bg);color:var(--gold);padding:2px 8px;border-radius:99px;font-weight:700}
+.pitch{display:grid;gap:12px;margin-top:6px;padding:22px 18px;border-radius:18px;background:linear-gradient(160deg,#1E5A57,#17413F);color:#F6F1E4}
+.pitch .pt-k{font-size:13px;font-weight:700;color:#E2B456;letter-spacing:.04em}
+.pitch h2{font-size:23px;line-height:1.4;color:#fff}.pitch h2 em{font-style:normal;color:#E2B456}
+.pitch p{color:#E4EBE7}.pitch p b{color:#fff}
+.pitch ul{list-style:none;margin:2px 0;padding:0;display:grid;gap:10px}
+.pitch li{padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.1);display:grid;gap:2px}
+.pitch li b{color:#fff;font-size:16px}.pitch li span{font-size:14px;color:#D5E0DB}
+.pitch .pt-end{margin-top:4px}.pitch .btn{width:100%}
 .hooks{display:grid;gap:22px;padding-block:22px}
 .hook h3{font-size:19px}
 .hook h3 small{display:block;font-size:16px;font-weight:400;color:var(--muted);font-family:var(--body)}
@@ -1108,7 +1117,20 @@ function renderHome(){
  <p class="launchnote">🥕 당근에는 처음 출시하는 거라 지금 할인 중이에요</p>
  <p class="scrollhint">아래로 내려 보세요 ﹀</p>
  </section>`},{t:"궁금한 것",h:`
- <section class="hooks">${HOOKS.map(h=>`<div class="hook"><h3>${h.q}<small>${h.a}</small></h3><p class="fake" aria-hidden="true">${scramble(DM[(h.q.length*3)%10].p[1])}</p></div>`).join("")}</section>`},{t:"목차",h:`
+ <section class="hooks">${HOOKS.map(h=>`<div class="hook"><h3>${h.q}<small>${h.a}</small></h3><p class="fake" aria-hidden="true">${scramble(DM[(h.q.length*3)%10].p[1])}</p></div>`).join("")}</section>
+ <section class="pitch">
+  <div class="pt-k">이런 고민, 해 보셨죠?</div>
+  <h2>학원은 늘어나는데,<br><em>정작 아이가 뭘 좋아하는지</em><br>모르겠다면</h2>
+  <p>같은 공부를 시켜도 어떤 아이는 쑥쑥 크고, 어떤 아이는 금방 지칩니다. 타고난 기질을 알면 <b>무엇을 시킬지보다 어떻게 도와줄지</b>가 보여요.</p>
+  <ul>
+   <li><b>우리 아이만의 리포트</b><span>생년월일로 이름까지 넣어 만드는 맞춤 풀이, 아이마다 다르게 풀어 드려요</span></li>
+   <li><b>추천 직업·학과와 공부 방법</b><span>잘 맞는 분야와 과목, 공부 스타일까지 한 번에 확인해요</span></li>
+   <li><b>부모님이 바로 쓰는 한마디</b><span>힘이 되는 말, 피해야 할 말을 아이 기질에 맞춰 알려 드려요</span></li>
+   <li><b>돈 습관과 투자 성향까지</b><span>용돈 교육에 도움이 되는 우리 아이의 돈 성향도 담았어요</span></li>
+  </ul>
+  <p class="pt-end">궁금증은 아래 목차를 보고, 결과는 <b>무료 미리보기</b>로 먼저 확인해 보세요.</p>
+  <button type="button" class="btn gold" data-go="f">우리 아이 무료로 미리보기</button>
+ </section>`},{t:"목차",h:`
  <section class="toc">
   <div class="toc-h"><h2>우리 아이 진로 리포트 목차</h2><p class="small">10개 장 + 부록 · 51가지 풀이 · 표지와 한눈에 보는 요약까지, 아이마다 1만 4천 자 안팎의 맞춤 풀이</p></div>
   ${TOC.map((c,i)=>`<div class="chap"><div class="ch-no">${c[3]||`${i+1}장`}</div><h2>${c[0]}</h2><ul class="items">${c[1].map((t,k)=>`<li><b>풀이${k+1}</b>${t}</li>`).join("")}</ul>${c[2]?`<button type="button" class="more" data-go="f">+ 그 외 ${c[2]}가지 풀이 추가 제공</button>`:""}</div>`).join("")}
@@ -1120,7 +1142,7 @@ function renderHome(){
    <div class="f" style="display:grid;gap:6px;font-size:13px;color:var(--muted)">성별<div class="seg"><button type="button" id="gF" aria-pressed="${last?.g!=="M"}">여아</button><button type="button" id="gM" aria-pressed="${last?.g==="M"}">남아</button></div></div>
   </div>
   <p class="small" style="margin-top:-6px">정보 보호를 위해 성은 빼고 이름만 넣어 주세요. 별명도 괜찮아요. 비우면 ‘우리 아이’로 불러요.</p>
-  <label class="f">생년월일 (양력, 숫자 8자리)<input id="bd" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" placeholder="예: 20170504" value="${last?`${last.y}${String(last.m).padStart(2,"0")}${String(last.d).padStart(2,"0")}`:""}"></label>
+  <label class="f">생년월일 (양력, 숫자 8자리 · 점은 자동)<input id="bd" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" placeholder="예: 2017.05.04" value="${last?`${last.y}.${String(last.m).padStart(2,"0")}.${String(last.d).padStart(2,"0")}`:""}"></label>
   <div class="f" style="display:grid;gap:8px;font-size:13px;color:var(--muted)">태어난 시간
    <div class="tg" id="tg">${SJ.map((x,k)=>`<button type="button" data-k="${k}" aria-pressed="false"><b>${x[0]} ${x[1]}</b><span>${x[2]}</span></button>`).join("")}</div>
    <button type="button" class="tg1" id="tgx" aria-pressed="false">🤔 태어난 시간을 몰라요</button></div>
@@ -1138,6 +1160,8 @@ function renderHome(){
  const setT=v=>{tsel=v;tbtn.forEach(b=>b.setAttribute("aria-pressed",+b.dataset.k===v));tx.setAttribute("aria-pressed",v<0);$("#err").hidden=true;};
  tbtn.forEach(b=>b.onclick=()=>setT(+b.dataset.k));tx.onclick=()=>setT(-1);
  document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>goPage(FORM_PG));
+ $("#bd").addEventListener("input",e=>{const el=e.target,dg=el.value.replace(/\D/g,"").slice(0,8);
+  el.value=dg.length>6?`${dg.slice(0,4)}.${dg.slice(4,6)}.${dg.slice(6)}`:dg.length>4?`${dg.slice(0,4)}.${dg.slice(4)}`:dg;});
  $("#f").onsubmit=e=>{e&&e.preventDefault&&e.preventDefault();
   const bd=$("#bd").value,err=$("#err");
   if(!bd){err.textContent="생년월일을 입력해 주세요.";err.hidden=false;return;}
@@ -1145,7 +1169,7 @@ function renderHome(){
   let y,m,d;
   if(sp.length===3&&sp[0].length===4){y=+sp[0];m=+sp[1];d=+sp[2];}
   else if(dg.length===8){y=+dg.slice(0,4);m=+dg.slice(4,6);d=+dg.slice(6,8);}
-  else{err.textContent="생년월일을 숫자 8자리로 입력해 주세요. 예: 20170504";err.hidden=false;return;}
+  else{err.textContent="생년월일을 숫자 8자리로 입력해 주세요. 예: 2017.05.04";err.hidden=false;return;}
   if(y<1990||y>2026){err.textContent="1990년부터 2026년 사이의 생년월일을 입력해 주세요.";err.hidden=false;return;}
   const dt=new Date(y,m-1,d);if(dt.getFullYear()!==y||dt.getMonth()!==m-1||dt.getDate()!==d){err.textContent="없는 날짜예요. 년·월·일을 다시 확인해 주세요.";err.hidden=false;return;}
   if(tsel===null){err.textContent="태어난 시간을 골라 주세요. 모르면 ‘태어난 시간을 몰라요’를 눌러 주세요.";err.hidden=false;return;}

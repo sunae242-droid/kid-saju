@@ -117,6 +117,14 @@ html.flow #pages>.page:first-child{min-height:calc(100svh - 56px);display:flex;f
 .pt-bars b{display:block;height:100%;background:#E2B456;border-radius:4px}.pt-bars i.bl{filter:blur(3px)}
 .pt-lock{display:grid;gap:10px}.pt-lock>div{padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.1)}
 .pt-lock b{color:#fff;font-size:15px;line-height:1.4}.pt-lock .blur{margin-top:6px;font-size:14px;filter:blur(4.5px);user-select:none}
+.pt-ex{display:grid;gap:10px}.pt-tag{font-size:11px;color:#E2B456}
+.pt-box{padding:12px;border-radius:14px;background:rgba(255,255,255,.1);display:grid;gap:10px}.pt-box h3{font-size:15px;color:#fff;margin:0}
+.pt-top{list-style:none;margin:0;padding:0;display:grid;gap:8px}.pt-top li{display:grid;grid-template-columns:22px 1fr auto;align-items:center;gap:6px;font-size:14px;color:#fff}
+.pt-top li span{width:20px;height:20px;border-radius:50%;background:#E2B456;color:#17413F;font-size:12px;font-weight:700;display:grid;place-items:center}.pt-top li em{font-style:normal;color:#E2B456;font-weight:700}
+.pt-top li.bl b,.pt-top li.bl em{filter:blur(4px)}
+.chps{display:flex;flex-wrap:wrap;gap:6px}.chp{padding:6px 11px;border-radius:999px;background:rgba(226,180,86,.22);border:1px solid rgba(226,180,86,.6);color:#fff;font-size:13px}.chp.bl{filter:blur(3.5px)}
+.pt-work{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;font-size:12px;color:#D5E0DB}.pt-work i{display:block;height:8px;border-radius:4px;background:rgba(255,255,255,.18);overflow:hidden}.pt-work b{display:block;height:100%;background:#E2B456}
+.pt-more{font-size:14px}.pt-more .blur{display:block;margin-top:4px;filter:blur(4.5px);user-select:none}
 .pitch .pt-end{margin-top:2px}.pitch .btn{width:100%}
 .hooks{display:grid;gap:22px;padding-block:22px}
 .hook h3{font-size:19px}
@@ -1112,6 +1120,24 @@ ${i.g==="M"?"남자아이":"여자아이"}`;}
 function renderHome(){
  const last=null; // 입력칸은 항상 비워서 시작 (이전 입력값을 화면에 다시 띄우지 않음)
  const TOC=[["타고난 기질과 성격",["한마디로 우리 아이는? · 닮은 동물","일간 풀이 · 우리 아이는 어떤 자연?","우리 아이 사용설명서 · 충전과 방전"],2],["숨은 재능과 강점",["핵심 재능 유형 분석","다섯 가지 힘의 비율","재능이 빨리 자라는 환경"],2],["딱 맞는 진로와 직업",["6대 적성 지도 · 의료/법/IT/예술/경영/교육","추천 직업 TOP 5와 지금 해 볼 것","추천 학과 · 전공"],2],["공부 전략과 과목 적성",["과목별 적성 지도","타고난 공부 스타일","2027년 시험·대회에 좋은 달"],1],["직장인형일까, 사업가형일까?",["일하는 체질 진단","어울리는 조직과 성공 포인트"],1],["진로 흐름과 시기",["2026~2030 5년 흐름","2027 정미년 집중 분석 · 월별 흐름","10년 대운 흐름"],0],["친구 관계와 마음 건강",["친구 관계 스타일","스트레스 신호와 회복법"],1],["부모님이 가장 많이 묻는 질문",["의대 갈 수 있을까요?","예체능 시켜도 될까요?","유학 체질일까요?"],1],["부모님을 위한 가이드",["힘이 되는 말, 피해야 할 말","부족한 기운 채우기"],2],["투자 성향과 돈 습관",["돈을 대하는 타입 · 5가지 유형","안정 vs 도전 · 투자 성향 지도","장점, 주의점, 부모님 가이드"],0],["사주 자세히 보기",["사주 원국과 십성 이야기","오행 밸런스 · 신강/신약","역마 · 도화 · 화개 신살"],4,"부록"]];
+
+ // 결제 유도용 예시 화면: 가상의 예시 아이를 실제 사주 계산으로 뽑은 값 (실제 고객 정보 아님)
+ const sampleHTML=(()=>{try{
+  const A=analyze({name:"",y:2016,m:8,d:23,h:12,mi:30,g:"F",corr:CORR,hk:false}),F=A.fieldsSorted,cx=100,cy=100,R=68;
+  const pt=(k,r)=>{const a=-Math.PI/2+2*Math.PI*k/6;return [cx+r*Math.cos(a),cy+r*Math.sin(a)].map(v=>v.toFixed(1)).join(",");};
+  const pos=F.map((f,i)=>({n:f.name,v:f.score})).sort((a,b)=>FIELDS.findIndex(x=>x.name===a.n)-FIELDS.findIndex(x=>x.name===b.n));
+  const ring=f=>`<polygon points="${pos.map((_,k)=>pt(k,R*f)).join(" ")}" fill="none" stroke="rgba(255,255,255,.25)"/>`;
+  const poly=pos.map((x,k)=>pt(k,R*Math.max(.15,x.v/100))).join(" ");
+  const labels=pos.map((x,k)=>{const [lx,ly]=pt(k,R+20).split(",");return `<text x="${lx}" y="${ly}" fill="#fff" font-size="11" text-anchor="middle" dominant-baseline="middle">${x.n.slice(0,4)}</text>`;}).join("");
+  const svg=`<svg viewBox="0 0 200 200" role="img" aria-label="적성 지도 예시">${ring(.5)}${ring(1)}<polygon points="${poly}" fill="rgba(226,180,86,.35)" stroke="#E2B456" stroke-width="2"/>${labels}</svg>`;
+  const chip=(sc,bl)=>`<span class="chp${bl?" bl":""}">${sc[2]>=50?sc[1]:sc[0]}</span>`;
+  const top3=F.slice(0,3).map((f,i)=>`<li${i?' class="bl"':''}><span>${i+1}</span><b>${f.name}</b><em>${f.score}</em></li>`).join("");
+  return `<div class="pt-ex"><div class="pt-tag">예시 · 가상의 아이를 실제 사주 계산으로 뽑은 화면이에요</div>
+   <div class="pt-box"><h3>우리 아이의 타고난 적성은?</h3><div class="pt-chart"><div class="pt-svg">${svg}</div><ol class="pt-top">${top3}</ol></div></div>
+   <div class="pt-box"><h3>우리 아이의 공부·생활 유형은?</h3><div class="chps">${chip(A.scales[0])}${chip(A.scales[2])}${chip(A.scales[1],1)}${chip(A.scales[3],1)}</div>
+    <div class="pt-work"><span>직장인형</span><i><b style="width:${A.workPct}%"></b></i><span>사업가형</span></div>
+    <p class="pt-more">어울리는 직업 TOP 5 <span class="blur">${A.top.slice(0,5).map(j=>j.t).join(" · ")}</span></p></div></div>`;
+ }catch(e){return "";}})();
  const HP=[{t:"소개",h:`
  <section class="hero">
   <div class="eyebrow">생년월일로 보는 아이 진로 리포트</div>
@@ -1126,13 +1152,7 @@ function renderHome(){
   <div class="pt-k">학원 전에, 우리 아이 기질부터</div>
   <h2>같은 공부, 같은 학원인데<br><em>왜 우리 아이만 다를까요?</em></h2>
   <p>타고난 기질을 알면 <b>어떻게 도와줄지</b>가 보여요.</p>
-  <div class="pt-chart"><div class="pt-svg"><svg viewBox="0 0 200 200" role="img" aria-label="오행 균형 예시 그래프"><polygon points="100.0,65.0 133.3,89.2 120.6,128.3 79.4,128.3 66.7,89.2" fill="none" stroke="rgba(255,255,255,.25)"/><polygon points="100.0,30.0 166.6,78.4 141.1,156.6 58.9,156.6 33.4,78.4" fill="none" stroke="rgba(255,255,255,.25)"/><polygon points="100.0,40.5 136.6,88.1 128.8,139.6 83.5,122.7 56.7,85.9" fill="rgba(226,180,86,.35)" stroke="#E2B456" stroke-width="2"/><circle cx="100.0" cy="40.5" r="5" fill="#5DB86F"/><circle cx="136.6" cy="88.1" r="5" fill="#E8735F"/><circle cx="128.8" cy="139.6" r="5" fill="#D9AE4E"/><circle cx="83.5" cy="122.7" r="5" fill="#C9D1D6"/><circle cx="56.7" cy="85.9" r="5" fill="#6E95CF"/><text x="100.0" y="13.0" fill="#fff" font-size="13" text-anchor="middle" dominant-baseline="middle">목</text><text x="182.7" y="73.1" fill="#fff" font-size="13" text-anchor="middle" dominant-baseline="middle">화</text><text x="151.1" y="170.4" fill="#fff" font-size="13" text-anchor="middle" dominant-baseline="middle">토</text><text x="48.9" y="170.4" fill="#fff" font-size="13" text-anchor="middle" dominant-baseline="middle">금</text><text x="17.3" y="73.1" fill="#fff" font-size="13" text-anchor="middle" dominant-baseline="middle">수</text></svg></div>
-   <div class="pt-bars"><em>예시 화면</em>
-    <div><span>🎯 적성</span><i><b style="width:82%"></b></i></div>
-    <div><span>📚 공부 스타일</span><i><b style="width:64%"></b></i></div>
-    <div><span>🤝 친구 관계</span><i class="bl"><b style="width:48%"></b></i></div>
-    <div><span>💰 돈 성향</span><i class="bl"><b style="width:70%"></b></i></div>
-   </div></div>
+  ${sampleHTML}
   <div class="pt-lock">
    <div><b>🤝 친구 관계에서 우리 아이가 힘들어할 수 있는 포인트</b><p class="blur" aria-hidden="true">우리 아이는 마음을 표현하는 속도가 느려서 친구들 사이에서 오해를 받을 수 있고 처음 만난 친구에게는 먼저 다가가는 데 시간이</p></div>
    <div><b>🌱 부모님이 미리 알면 도와줄 수 있는 말과 행동</b><p class="blur" aria-hidden="true">이런 기질의 아이에게는 이렇게 말해 주면 마음이 열리고 이런 말은 피해 주는 것이 좋습니다 그리고 이런 활동이</p></div>

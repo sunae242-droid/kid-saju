@@ -1417,7 +1417,7 @@ function renderHome(){
    <label class="f">이름 (성 빼고)<input id="name" maxlength="8" placeholder="예: 길동" value="${esc(last?.name||"")}"></label>
    <div class="f" style="display:grid;gap:6px;font-size:13px;color:var(--muted)">성별<div class="seg"><button type="button" id="gF" aria-pressed="${last?.g==="F"}">여아</button><button type="button" id="gM" aria-pressed="${last?.g==="M"}">남아</button></div></div>
   </div>
-  <p class="small" style="margin-top:-6px">정보 보호를 위해 성은 빼고 이름만 넣어 주세요. 별명도 괜찮아요. 비우면 ‘우리 아이’로 불러요.</p>
+  <p class="small" style="margin-top:-6px">별명이나 이름 넣어 주세요.</p>
   <label class="f">생년월일 (양력, 숫자 8자리 · 점은 자동)<input id="bd" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="10" autocomplete="off" placeholder="예: 2017.05.04" value="${last?`${last.y}.${String(last.m).padStart(2,"0")}.${String(last.d).padStart(2,"0")}`:""}"></label>
   <div class="f" style="display:grid;gap:8px;font-size:13px;color:var(--muted)">태어난 시간
    <div class="tg" id="tg">${SJ.map((x,k)=>`<button type="button" data-k="${k}" aria-pressed="false"><b>${x[0]} ${x[1]}</b><span>${x[2]}</span></button>`).join("")}</div>

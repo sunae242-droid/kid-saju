@@ -52,9 +52,9 @@ button{cursor:pointer}
 .sh-x{border:0;background:none;font-size:20px;color:var(--muted);padding:4px 8px}
 .testbadge{background:var(--gold-bg);color:var(--gold);font-size:13px;font-weight:700;padding:8px 10px;border-radius:10px;text-align:center}
 .sh-item{padding:12px;border-radius:12px;background:var(--paper)}.sh-item div{display:grid;gap:2px}.sh-item span{font-size:13px;color:var(--muted)}
-.shine{text-align:center;font-weight:800;font-size:17px;margin:2px 0 4px;background:linear-gradient(100deg,#8A5A00 0%,#8A5A00 35%,#F2C14E 48%,#FFF3C4 50%,#F2C14E 52%,#8A5A00 65%,#8A5A00 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:shine 2.4s linear infinite}
-@keyframes shine{from{background-position:100% 0}to{background-position:-100% 0}}
-@media (prefers-reduced-motion:reduce){.shine{animation:none;background:none;-webkit-text-fill-color:#8A5A00;color:#8A5A00}}
+.shine{text-align:center;font-weight:800;font-size:17px;line-height:1.5;margin:2px 0 4px;color:#8A5A00;animation:shine 1.8s ease-in-out infinite}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .shine{color:#E2B456}}
+@keyframes shine{0%,100%{text-shadow:0 0 0 rgba(242,193,78,0)}50%{text-shadow:0 0 12px rgba(242,193,78,.95),0 0 2px rgba(255,243,196,.9)}}
+@media (prefers-reduced-motion:reduce){.shine{animation:none}}
 .sh-sum{display:grid;gap:6px;font-size:14px}.sh-sum div{display:flex;justify-content:space-between}.sh-sum s{color:var(--muted)}.sh-sum em{font-style:normal;color:var(--red)}
 .sh-sum .tot{border-top:1px solid var(--line);padding-top:8px;font-size:16px;font-weight:700}.sh-sum .tot b{color:var(--red);font-size:22px;font-family:var(--display)}
 .sh-lab{font-size:14px;font-weight:700}
@@ -1636,6 +1636,7 @@ function buyBox(){return `
  <section class="card buy" id="buy">
   <div class="eyebrow">전체 리포트</div>
   <h2>${st.A.nick}의 진로 리포트 전체 보기</h2>
+  <p class="shine">☕ 커피 두 잔 값으로 보는<br>우리 아이의 미래</p>
   <div class="price"><s>정가 ${LIST_PRICE}</s><b>${PRICE}</b><span>${SALE}</span></div>
   <ul class="incl"><li>총 23페이지 · 75가지 풀이 전체 공개</li><li>컬러 표지 + 한눈에 보는 요약</li><li>결제 즉시 바로 열람 · 다시 보기 링크</li></ul>
   <button class="btn gold" type="button" data-pay>${PRICE} 결제하고 전체 보기</button>
@@ -1646,7 +1647,7 @@ let payM="CARD";
 function openPay(){const i=st.inp;payM="CARD";
  $("#shBody").innerHTML=`
   <div class="sh-hd"><b id="shT">결제하기</b><button type="button" class="sh-x" id="shX" aria-label="닫기">✕</button></div>
-  <p class="shine">☕ 커피 두 잔 값으로 보는 우리 아이 진로</p>
+  <p class="shine">☕ 커피 두 잔 값으로 보는<br>우리 아이의 미래</p>
   ${PAY.mode==="test"?`<div class="testbadge">테스트 결제 · 실제 돈이 나가지 않아요</div>`:""}
   <div class="sh-item"><div><b>${PAY.orderName}</b><span>${esc(st.A.nick)} · ${i.y}.${i.m}.${i.d} · ${i.g==="M"?"남":"여"} · ${timeText(i)}</span></div></div>
   <div class="sh-sum"><div><span>상품 금액</span><s>${LIST_PRICE}</s></div><div><span>할인 (${SALE.replace(" 할인","")})</span><em>-${(+LIST_PRICE.replace(/\D/g,"")-PAY.amount).toLocaleString()}원</em></div><div class="tot"><span>최종 결제 금액</span><b>${PRICE}</b></div></div>

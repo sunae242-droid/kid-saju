@@ -1,4 +1,4 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>운세 상담소 · 우리 아이 진로 사주</title><meta name="description" content="운세 상담소 · 사주로 보는 우리 아이의 타고난 재능과 진로 리포트. 미리보기 후 결제하면 전체 리포트가 바로 열려요."><meta property="og:site_name" content="운세 상담소"><meta property="og:title" content="운세 상담소 · 우리 아이 진로 사주"><meta property="og:description" content="우리 아이의 타고난 천재성은? 사주로 보는 진로 리포트 · 미리보기"><meta property="og:type" content="website"></head><body><title>운세 상담소 · 우리 아이 진로 사주</title>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>운세 상담소 · 우리 아이 진로 사주</title><meta name="description" content="운세 상담소 · 사주로 보는 우리 아이의 타고난 재능과 진로 리포트. 결제하면 전체 리포트가 바로 열려요."><meta property="og:site_name" content="운세 상담소"><meta property="og:title" content="운세 상담소 · 우리 아이 진로 사주"><meta property="og:description" content="우리 아이의 타고난 천재성은? 사주로 보는 진로 리포트"><meta property="og:type" content="website"></head><body><title>운세 상담소 · 우리 아이 진로 사주</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
@@ -1406,16 +1406,16 @@ function renderHome(){
   <h2>같은 공부, 같은 학원인데<br><em>왜 우리 아이만 다를까요?</em></h2>
   <p>타고난 기질을 알면 <b>어떻게 도와줄지</b>가 보여요.</p>
   ${sampleHTML}
-  <p class="pt-end">우리 아이는 어떨까요?<br>지금 <b>미리보기</b>로 먼저 확인해 보세요.</p>
-  <button type="button" class="btn gold" data-go="f">우리 아이 미리보기</button>
+  <p class="pt-end">우리 아이는 어떨까요?<br>지금 <b>우리 아이 정보</b>를 넣어 보세요.</p>
+  <button type="button" class="btn gold" data-go="f">우리 아이 리포트 시작하기</button>
  </section>`},{t:"목차",h:`
  <section class="toc">
   <div class="toc-h"><span class="toc-pg">총 ${TOC.length+4}페이지 리포트</span><h2>우리 아이 진로 리포트 목차</h2><p class="small">18개 장 + 부록 · 75가지 풀이</p></div>
-  <ol class="toc-list">${TOC.map((c,i)=>`<li><span class="tn">${c[3]||`${i+1}장`}</span><b>${c[0]}</b>${i<2?"<em>미리보기</em>":""}</li>`).join("")}</ol>
+  <ol class="toc-list">${TOC.map((c,i)=>`<li><span class="tn">${c[3]||`${i+1}장`}</span><b>${c[0]}</b></li>`).join("")}</ol>
   <p class="small toc-more">표지·요약·사주 원국·적성 지도 포함 · 1만 4천 자 이상</p>
- </section>`},{t:"미리보기",actLabel:"미리보기",act:()=>submitForm(),h:`
+ </section>`},{t:"정보 입력",actLabel:"리포트 받기",act:()=>submitForm(),h:`
  <form class="card fcompact" id="f" novalidate>
-  <h2>미리보기</h2>
+  <h2>우리 아이 정보 입력</h2>
   <div class="two">
    <label class="f">이름 (성 빼고)<input id="name" maxlength="8" placeholder="예: 길동" value="${esc(last?.name||"")}"></label>
    <div class="f" style="display:grid;gap:6px;font-size:13px;color:var(--muted)">성별<div class="seg"><button type="button" id="gF" aria-pressed="${last?.g==="F"}">여아</button><button type="button" id="gM" aria-pressed="${last?.g==="M"}">남아</button></div></div>
@@ -1427,10 +1427,10 @@ function renderHome(){
    <button type="button" class="tg1" id="tgx" aria-pressed="false">🤔 태어난 시간을 몰라요</button>
    <p class="small" style="margin:0">밤 11시 30분~12시 사이에 태어났다면 <b>다음 날 날짜</b>로 넣고 자시를 골라 주세요.</p></div>
   <p class="err" id="err" hidden></p>
-  <button class="btn gold flowonly">미리보기</button>
+  <button class="btn gold flowonly">입력하고 결제하러 가기</button>
  </form>
  ${footer()}`}];
- const FORM_PG=HP.findIndex(p=>p.t==="미리보기"); // 미리보기(입력칸) 페이지 — 맨 마지막
+ const FORM_PG=HP.findIndex(p=>p.t==="정보 입력"); // 정보 입력칸 페이지 — 맨 마지막
  mountPager(HP,`<div class="hdr"><b>${BIZ.name}</b><span>우리 아이 진로 사주</span></div>`,{counter:false,flow:true,last:()=>goPage(FORM_PG)}); // 랜딩페이지는 이전/다음 버튼 없이 일반 스크롤
  $("#pNext").onclick=()=>{const c=st.pages[st.pg];if(c.act)c.act();else if(st.pg===st.pages.length-1)goPage(FORM_PG);else goPage(st.pg+1);};
  let g=last?.g||null;   // 성별은 미리 골라 두지 않음 — 안 고르면 안내 (남아인데 여아로 계산되는 실수 방지)
@@ -1457,7 +1457,8 @@ function renderHome(){
   const tm=tsel<0?{hk:false,h:12,mi:0}:{hk:true,h:tsel*2,mi:30};
   const inp={name:$("#name").value.trim().slice(0,10),y,m,d,...tm,g,corr:CORR};
   store.set("lastInp",inp);openPreview(inp);
-  if(store.get("passOK")&&!st.unlocked){store.set("passOK",null);payDone({orderId:"GROBLE-"+st.order,method:"GROBLE",amount:PAY.amount});}};
+  if(store.get("passOK")&&!st.unlocked){store.set("passOK",null);payDone({orderId:"GROBLE-"+st.order,method:"GROBLE",amount:PAY.amount});}
+  if(!st.unlocked)openPay();};
 }
 function submitForm(){const f=$("#f");if(f&&f.onsubmit)f.onsubmit({preventDefault(){}});}
 function bizInfo(){const r=[["대표자",BIZ.owner],["사업자등록번호",BIZ.regNo],["통신판매업 신고번호",BIZ.mailOrderNo],["연락처",BIZ.tel],["이메일",BIZ.email],["사업장 주소",BIZ.addr]].filter(x=>x[1]);
@@ -1505,12 +1506,12 @@ function renderReport(){
  const P=[];
  if(u){P.push({t:"표지",h:paidNote()+pdfBar()+coverHTML(A,st.inp,timeText(st.inp),ch.length+4)});P.push({t:"한눈에 보기",h:summaryHTML(A,ch)});}
  if(!u)P.push({t:"표지",h:coverHTML(A,st.inp,timeText(st.inp),ch.length+4)});
- P.push({t:"사주 원국",h:prof},{t:"적성 지도",h:fields});
- // 미리보기는 2장까지만 — 3장부터(부록 포함)는 빼고 바로 결제 화면
-  ch.forEach((c,ci)=>{if(u||ci<FREE_CH)P.push({t:`${lbl(c,ci)} · ${c.t}`,h:chap(c,ci)});});
- if(!u)P.push({t:"전체 리포트 열기",h:`<div class="paynext"><b>여기까지 미리보기예요</b><span>${FREE_CH+1}장부터는 결제하고 볼 수 있어요. 결제하면 총 ${ch.length+4}페이지, ${nItems}가지 풀이가 모두 열려요.</span><ul class="lockch">${ch.slice(FREE_CH).map((c,k)=>`<li>${lockSVG}<span>${lbl(c,k+FREE_CH)} · ${c.t}</span></li>`).join("")}</ul></div>`+buyBox(),pay:true});
+ if(u){P.push({t:"사주 원국",h:prof},{t:"적성 지도",h:fields});
+  ch.forEach((c,ci)=>P.push({t:`${lbl(c,ci)} · ${c.t}`,h:chap(c,ci)}));}
+ // 결제 전에는 표지와 결제 화면만 (미리보기 없이 바로 결제)
+ if(!u)P.push({t:"전체 리포트 열기",h:`<div class="paynext"><b>${esc(a)}의 리포트가 준비됐어요</b><span>결제하면 총 ${ch.length+4}페이지, ${nItems}가지 풀이가 바로 열려요.</span><ul class="lockch">${ch.map((c,k)=>`<li>${lockSVG}<span>${lbl(c,k)} · ${c.t}</span></li>`).join("")}</ul></div>`+buyBox(),pay:true});
  P[P.length-1].h+=footer();
- const head=`<div class="hdr"><b>${BIZ.name}</b><span>${st.inp.test?"테스트":st.inp.demo?"예시 리포트":u?"전체 리포트":"미리보기"}</span></div>`;
+ const head=`<div class="hdr"><b>${BIZ.name}</b><span>${st.inp.test?"테스트":st.inp.demo?"예시 리포트":u?"전체 리포트":"결제 안내"}</span></div>`;
  // 리포트(미리보기·결제 후 모두)는 이전/다음 버튼 없이 위아래로 쭉 스크롤
  // (한 장씩 넘기기는 긴 장이 화면 높이에 잘려 글자가 끊겨 보여서 쓰지 않음)
  mountPager(P,head,{counter:true,flow:true,last:()=>{if(P[P.length-1].pay)openPay();}});

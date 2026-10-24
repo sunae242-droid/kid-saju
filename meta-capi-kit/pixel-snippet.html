@@ -1,0 +1,34 @@
+<!-- 메타 픽셀 + 전환 API: <head> 안, 다른 스크립트보다 위에 붙여 넣으세요. PIXEL_ID 두 군데를 픽셀 번호로 바꾸세요. -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', 'PIXEL_ID');
+
+// 브라우저 픽셀과 서버(전환 API)로 같은 이벤트를 같은 event_id로 보냅니다. 메타가 둘을 하나로 합쳐 셉니다.
+window.metaTrack = function (name, data, extra) {
+  var id = (extra && extra.eventId) || (name + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8));
+  try { fbq('track', name, data || {}, { eventID: id }); } catch (e) {}
+  try {
+    fetch('/api/meta-capi', {
+      method: 'POST', keepalive: true, credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event_name: name, event_id: id, event_source_url: location.href,
+        custom_data: data || {}, phone: extra && extra.phone })
+    });
+  } catch (e) {}
+  return id;
+};
+metaTrack('PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=PIXEL_ID&ev=PageView&noscript=1"/></noscript>
+
+<!--
+사이트 안에서 부를 곳 (예시):
+  리포트 미리보기를 보여줄 때:   metaTrack('ViewContent', {content_name:'우리 아이 진로 리포트', value:9900, currency:'KRW'})
+  생년월일 입력을 끝냈을 때:     metaTrack('Lead', {content_name:'생년월일 입력'})
+  "결제하기" 버튼을 눌렀을 때:   metaTrack('InitiateCheckout', {value:9900, currency:'KRW', num_items:1})
+  결제가 끝난 화면에서 한 번만:  metaTrack('Purchase', {value:9900, currency:'KRW', content_type:'product', content_ids:['kid-career-report']}, {eventId:'purchase-'+주문번호})
+-->
